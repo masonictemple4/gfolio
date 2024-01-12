@@ -1,0 +1,32 @@
+[
+  {
+    "url": "/",
+    "text": "home",
+    "icon": ""
+  },
+  {
+    "url": "https://github.com/masonictemple4",
+    "text": "github",
+    "icon": ""
+  },
+  {
+    "url": "https://www.linkedin.com/in/mason-tucker-290b2b128/",
+    "text": "linkedin",
+    "icon": ""
+  },
+  {
+    "url": "/resume",
+    "text": "resume",
+    "icon": ""
+  },
+  {
+    "url": "https://twitter.com/masonictemple4",
+    "text": "x/twitter",
+    "icon": ""
+  },
+  {
+    "url": "/blog",
+    "text": "blog",
+    "icon": ""
+  }
+]

@@ -1,0 +1,44 @@
+package components
+
+import (
+  _ "embed"
+  "encoding/json"
+)
+
+//go:embed footerLinks.json
+var footerData []byte
+
+type FooterLink struct {
+  Url string `json:"url"`
+  Text string `json:"text"`
+  Icon string `json:"icon"`
+}
+
+func FooterLinksFromData(data []byte) []FooterLink {
+  var links []FooterLink
+    if err := json.Unmarshal(data, &links); err != nil {
+      panic(err)
+    }
+  return links
+}
+
+func WithDefaultLinks() []FooterLink {
+  return FooterLinksFromData(footerData)
+}
+
+templ Footer(links ...FooterLink) {
+  <ul class="flex flex-wrap items-center justify-center mt-4">
+    for _, link := range links {
+      <li class="mr-6">
+        <a 
+          class="text-link-blue hover:underline underline-offset-4 hover:font-bold"
+          href={templ.SafeURL(link.Url)}
+          target=""
+        >
+          { link.Text }
+        </a>
+      </li>
+    }
+  </ul>
+}
+
