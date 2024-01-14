@@ -1,4 +1,4 @@
-module github.com/masonictemple4/gfolio
+module github.com/masonictemple4/masonictempl
 
 go 1.21.5
 
