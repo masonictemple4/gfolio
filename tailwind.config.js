@@ -5,9 +5,11 @@ module.exports = {
     extend: {
       width: {
         '100px': '100px',
+        '40px': '40px',
       },
       height: {
         '100px': '100px',
+        '40px': '40px',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

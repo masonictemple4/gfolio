@@ -1,13 +1,17 @@
 package main
 
 import (
-	"context"
+	"flag"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/a-h/templ"
 	"github.com/masonictemple4/masonictempl/components"
+)
+
+var (
+	hostPtr = flag.String("host", "", "host to serve on")
+	portPtr = flag.String("port", "8080", "port to serve on")
 )
 
 func main() {
@@ -18,18 +22,21 @@ func main() {
 
 	indexComponent := components.Index()
 
-	// Will print output to the console.
-	println("Render via component.Render")
-	indexComponent.Render(context.Background(), os.Stdout)
-	// Give a newline after the sample render
-	println()
-
 	// Render via server.
 
 	http.Handle("/", templ.Handler(indexComponent))
 
-	fmt.Println("Listening on :8080")
+	var hostStr string
+	if *hostPtr == "" {
+		hostStr = fmt.Sprintf(":%s", *portPtr)
+	} else {
+		hostStr = fmt.Sprintf("%s:%s", *hostPtr, *portPtr)
+	}
 
-	http.ListenAndServe(":8080", nil)
+	fmt.Printf("Listening on http://%s\n", hostStr)
+
+	http.ListenAndServe(hostStr, nil)
+
+	// random comment.
 
 }

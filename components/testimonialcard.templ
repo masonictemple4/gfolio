@@ -1,0 +1,19 @@
+package components
+
+templ TestimonialCard(body, profilepic, name, position string) {
+  <div class="max-w-lg mx-auto">
+      <figure class="max-w-lg mx-auto">
+          <blockquote>
+              <p class="italic text-gray-900 dark:text-white text-center">&quot;{body}&quot;</p>
+          </blockquote>
+          <figcaption class="flex items-center justify-center mt-6 space-x-3">
+              <img class="w-6 h-6 rounded-full w-40px h-40px" src={profilepic} alt="profile picture" />
+              <div class="flex items-center divide-x-2 divide-gray-500 dark:divide-gray-700">
+                  <div class="pr-3 font-medium text-gray-900 dark:text-white">{name}</div>
+                  <div class="pl-3 text-sm font-light text-gray-500 dark:text-gray-400">{position}</div>
+              </div>
+          </figcaption>
+      </figure>
+  </div>
+
+}

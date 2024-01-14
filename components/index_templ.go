@@ -10,6 +10,13 @@ import "context"
 import "io"
 import "bytes"
 
+var testimonialCardData map[string]string = map[string]string{
+	"body":       "Mason is an incredible back-end Software Engineer with an unmatched passion for coding, and skills to match! Mason is equally comfortable in macro and micro perspectives, having the rare ability to design and build entire systems, while continuously expanding upon the overall vision, as well as refining the technical foundations necessary to make it all function. At Listella he turned ideas into products, at every level. He strives to be an incredible teammate, and always available to help guide fellow engineers to reach their potential.",
+	"profilepic": "/assets/images/markmckelvie.jpeg",
+	"name":       "Mark Mckelvie",
+	"position":   "Senior iOS Engineer Listella",
+}
+
 func defaultHomeContent() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -42,6 +49,14 @@ func defaultHomeContent() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = LineSeparator().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = TestimonialCard(testimonialCardData["body"], testimonialCardData["profilepic"], testimonialCardData["name"], testimonialCardData["position"]).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -6,6 +6,7 @@ templ Page(title string, meta map[string]string, children ...templ.Component) {
     <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&subset=latin&display=swap" rel="stylesheet" />
       <link href="/assets/main.css" rel="stylesheet" />
       <title>{ title }</title>
       <script src="/assets/htmx.min.js"></script>
@@ -22,15 +23,13 @@ templ Page(title string, meta map[string]string, children ...templ.Component) {
 templ MainLayout(title string, children ...templ.Component) {
   <main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full min-h-full">
     @Navbar(false, nil)
-    <section class="container">
+    <section class="mt-8">
       // @PageHeader("", title)
       for _, child := range children {
         @child
       }
     </section>
-    <footer class="absolute bottom-16">
-      @Footer(WithDefaultLinks()...)
-    </footer>
+    @Footer(WithDefaultLinks()...)
   </main>
 }
 

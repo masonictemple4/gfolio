@@ -2,8 +2,11 @@ ASSET_DIR=assets
 COMPONENT_DIR=components
 IN_CSS=$(ASSET_DIR)/input.css
 OUT_CSS=$(ASSET_DIR)/main.css
+PROXY="http://localhost:8080"
+CMD="go run ."
 
 all: css templates run 
+
 
 css:
 	tailwindcss -i $(IN_CSS) -o $(OUT_CSS) -m
@@ -15,8 +18,26 @@ templates:
 run:
 	go run *.go
 
-.Phony: clean
+.PHONY: run-watch
+run-watch:
+	# templ generate --watch --proxy="http://localhost:8080" --cmd="go run ."
+	templ generate --watch --proxy=$(PROXY) --cmd=$(CMD)
+
+.PHONY: clean
 clean: 
 	[ -f $(OUT_CSS) ] && rm $(OUT_CSS) || true
 	[ -d $(COMPONENT_DIR) ] && rm $(COMPONENT_DIR)/*_templ.go || true
+
+
+.PHONY: hot-reload
+hot-reload:
+	templ generate --watch --proxy="http://localhost:8080" --cmd="make runserver"
+
+.PHONY: runserver
+runserver: css
+	go run .
+
+.PHONY: kill
+kill:
+		-kill $(shell jobs -p 2>/dev/null) || true
 
