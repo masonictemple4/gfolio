@@ -1,2 +1,2 @@
-# GFolio
-Is the golang and htmx version of my personal portfolio.
+# Masonictempl
+Slowly porting my old react and next.js portoflio/blog to a Go and Htmx solution. 
