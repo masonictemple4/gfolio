@@ -1,5 +1,6 @@
 package components
 
+
 templ Page(title string, meta map[string]string, children ...templ.Component) {
   <!DOCTYPE html>
   <html>
@@ -12,7 +13,8 @@ templ Page(title string, meta map[string]string, children ...templ.Component) {
       <script src="/assets/htmx.min.js"></script>
     </head>
     <body>
-      @MainLayout(title, children...)
+      // TODO: Get the path from context.
+      @MainLayout(ctx, title, children...)
     </body>
   </html>
 }
@@ -20,7 +22,7 @@ templ Page(title string, meta map[string]string, children ...templ.Component) {
 
 // TODO: Figure out the route here so that I don't display
 // a page title on home page..
-templ MainLayout(title string, children ...templ.Component) {
+templ MainLayout(ctx context.Context, title string, children ...templ.Component) {
   <main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full min-h-full">
     @Navbar(false, nil)
     <section class="mt-8">
@@ -33,3 +35,19 @@ templ MainLayout(title string, children ...templ.Component) {
   </main>
 }
 
+
+templ BlogLayout(ctx context.Context, title string, disableBreadcrumbs bool, children ...templ.Component) {
+  <section class="container">
+    @PageHeader("", title)
+    // <PageHeader plainText={''} gradientText={title} />
+    if !disableBreadcrumbs {
+      // TODO: Breadcrumbs component
+      // <BreadCrumbs />
+      @Breadcrumbs("")
+    }
+    <div className="w-2/3 mx-auto p-6">
+      {children...}
+    </div>
+  </section>
+
+}

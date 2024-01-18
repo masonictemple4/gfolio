@@ -3,6 +3,8 @@ package components
 import (
   _ "embed"
   "encoding/json"
+  "time"
+  "fmt"
 )
 
 //go:embed footerLinks.json
@@ -26,12 +28,16 @@ func WithDefaultLinks() []FooterLink {
   return FooterLinksFromData(footerData)
 }
 
+func getYear() string {
+  return fmt.Sprintf("%d", time.Now().Year())
+}
+
 templ Footer(links ...FooterLink) {
   <footer class="absolute bottom-16 rounded-lg shadow m-4">
     <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="" class="hover:underline">Mason Tucker</a>. All Rights Reserved.
+      <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© { getYear() } <a href="" class="hover:underline">Mason Tucker</a>. All Rights Reserved.
     </span>
-    <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
+    <!-- <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
         <li>
             <a href="#" class="hover:underline me-4 md:me-6">About</a>
         </li>
@@ -44,7 +50,7 @@ templ Footer(links ...FooterLink) {
         <li>
             <a href="#" class="hover:underline">Contact</a>
         </li>
-    </ul>
+    </ul> -->
     </div>
   </footer>
   <!-- <ul class="flex flex-wrap items-center justify-center mt-4">
