@@ -14,15 +14,13 @@ templ Page(title string, meta map[string]string, children ...templ.Component) {
     </head>
     <body>
       // TODO: Get the path from context.
-      @MainLayout(ctx, title, children...)
+      @MainLayout(title, children...)
     </body>
   </html>
 }
 
 
-// TODO: Figure out the route here so that I don't display
-// a page title on home page..
-templ MainLayout(ctx context.Context, title string, children ...templ.Component) {
+templ MainLayout(title string, children ...templ.Component) {
   <main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full min-h-full">
     @Navbar(false, nil)
     <section class="mt-8">
@@ -36,7 +34,7 @@ templ MainLayout(ctx context.Context, title string, children ...templ.Component)
 }
 
 
-templ BlogLayout(ctx context.Context, title string, disableBreadcrumbs bool, children ...templ.Component) {
+templ BlogLayout(title string, disableBreadcrumbs bool, children ...templ.Component) {
   <section class="container">
     @PageHeader("", title)
     // <PageHeader plainText={''} gradientText={title} />

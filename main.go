@@ -22,11 +22,12 @@ func main() {
 	http.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
 	indexComponent := components.Index()
+	blogComponent := components.BlogList()
 
 	// Render via server.
 
 	http.Handle("/", templ.Handler(indexComponent))
-	http.Handle("/blog", templ.Handler(indexComponent))
+	http.Handle("/blog", templ.Handler(blogComponent))
 
 	var hostStr string
 	if *hostPtr == "" {
