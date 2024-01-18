@@ -12,8 +12,8 @@ type Tag struct {
 /*
 func (t *Tag) ValidAssociation(srcType any, assoc string) bool {
 	switch srcType.(type) {
-	case Post:
-		if val, ok := validPostAssociationKey[assoc]; ok && reflect.TypeOf(t) == val {
+	case Blog:
+		if val, ok := validBlogAssociationKey[assoc]; ok && reflect.TypeOf(t) == val {
 			return true
 		}
 	}

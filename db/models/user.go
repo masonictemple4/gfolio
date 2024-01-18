@@ -55,15 +55,15 @@ func (u *User) Update(tx *gorm.DB, id int, body map[string]any) error {
 
 func (u *User) ValidAssociation(srcType any, assoc string) bool {
 	switch srcType.(type) {
-	case Post:
-		if val, ok := validPostAssociationKey[assoc]; ok && reflect.TypeOf(u) == val {
+	case Blog:
+		if val, ok := validBlogAssociationKey[assoc]; ok && reflect.TypeOf(u) == val {
 			return true
 		}
 	}
 	return false
 }
 
-func AuthorFromInput(tx *gorm.DB, input []dtos.PostAuthorInput, out *[]User) error {
+func AuthorFromInput(tx *gorm.DB, input []dtos.BlogAuthorInput, out *[]User) error {
 	var authors []User
 	if err := utils.Convert(input, &authors); err != nil {
 		return nil

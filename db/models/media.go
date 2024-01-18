@@ -33,8 +33,8 @@ type Media struct {
 func (m *Media) ValidAssociation(srcType any, assoc string) bool {
 
 	switch srcType.(type) {
-	case Post:
-		if val, ok := validPostAssociationKey[assoc]; ok && val != nil && reflect.TypeOf(m) == val {
+	case Blog:
+		if val, ok := validBlogAssociationKey[assoc]; ok && val != nil && reflect.TypeOf(m) == val {
 			return true
 		}
 	}
