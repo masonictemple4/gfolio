@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/masonictemple4/gfolio/components"
+	"github.com/masonictemple4/masonictempl/components"
 )
 
 var (
