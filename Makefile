@@ -34,7 +34,7 @@ hot-reload:
 	templ generate --watch --proxy="http://localhost:8080" --cmd="make runserver"
 
 .PHONY: runserver
-runserver: css
+runserver:
 	go run .
 
 .PHONY: kill
