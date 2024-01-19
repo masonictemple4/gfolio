@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"encoding/binary"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -56,7 +55,6 @@ func (i *InternalStore) init(path string, flag int) error {
 		return err
 	}
 
-	println("[Filestore (INIT)] Opening: ", path)
 	f, err := os.OpenFile(path, flag, 0755)
 	if err != nil {
 		return err
@@ -92,8 +90,6 @@ func (i *InternalStore) Write(ctx context.Context, object string, p []byte) (n i
 	// finWidth := w + lenWidth
 	i.size += uint64(w)
 
-	fmt.Println("[Filestore] Wrote ", i.size, " bytes to buffer.")
-
 	// need to pass the lock here.
 	defer i.reset()
 	defer i.mu.Unlock()
@@ -113,7 +109,6 @@ func (i *InternalStore) Read(ctx context.Context, path string) ([]byte, error) {
 	defer i.reset()
 	defer i.mu.Unlock()
 
-	println("[Filestore (READ)] Calling init from path: ", path)
 	if err := i.init(path, os.O_RDONLY); err != nil {
 		return nil, err
 	}
@@ -122,8 +117,6 @@ func (i *InternalStore) Read(ctx context.Context, path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Printf("[Filestore (READ)] Data: %s\n", string(data))
 
 	return data, nil
 }
