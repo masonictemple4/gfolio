@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/binary"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -39,10 +40,16 @@ func NewInternalStore(root string) (*InternalStore, error) {
 	}, nil
 }
 
-func (i *InternalStore) init(object string) error {
-	path := filepath.Join(i.root, object)
-	if strings.Contains(object, i.root) {
-		path = object
+func GetRootPath(i *InternalStore) string {
+	urlFriendly := strings.TrimPrefix(i.root, "./")
+
+	return urlFriendly
+}
+
+func (i *InternalStore) init(path string) error {
+
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return err
 	}
 
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
@@ -55,6 +62,9 @@ func (i *InternalStore) init(object string) error {
 		return err
 	}
 
+	i.File = f
+	i.buf = bufio.NewWriter(f)
+
 	i.size = uint64(fi.Size())
 
 	return nil
@@ -62,7 +72,6 @@ func (i *InternalStore) init(object string) error {
 
 func (i *InternalStore) Write(ctx context.Context, object string, p []byte) (n int64, err error) {
 	i.mu.Lock()
-	defer i.mu.Unlock()
 
 	if err := i.init(object); err != nil {
 		return 0, err
@@ -76,16 +85,26 @@ func (i *InternalStore) Write(ctx context.Context, object string, p []byte) (n i
 	// finWidth := w + lenWidth
 	i.size += uint64(w)
 
-	i.reset()
+	fmt.Println("[Filestore] Wrote ", i.size, " bytes to buffer.")
+
+	// need to pass the lock here.
+	defer i.reset()
+	defer i.mu.Unlock()
 
 	return int64(w), nil
 }
 
 func (i *InternalStore) Read(ctx context.Context, path string) ([]byte, error) {
 	i.mu.Lock()
-	defer i.mu.Unlock()
 
-	i.reset()
+	// I'm back and forth on this one
+	// the reset will not get called until
+	// after we unlock from reading.
+	// This means that all other methods that interact
+	// with the store will need to call reset to prevent
+	// unwanted behavior.
+	defer i.reset()
+	defer i.mu.Unlock()
 
 	if err := i.init(path); err != nil {
 		return nil, err
@@ -101,6 +120,8 @@ func (i *InternalStore) Read(ctx context.Context, path string) ([]byte, error) {
 
 func (i *InternalStore) Delete(ctx context.Context, path string) error {
 	i.mu.Lock()
+
+	defer i.reset()
 	defer i.mu.Unlock()
 
 	if err := os.Remove(path); err != nil {

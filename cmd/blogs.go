@@ -43,7 +43,9 @@ masonictempl blog create <file path>`,
 			log.Fatal(err)
 		}
 
-		createBlog(cmd.Context(), args[0], localstore, cmd.Flags())
+		if err := createBlog(cmd.Context(), args[0], localstore, cmd.Flags()); err != nil {
+			log.Fatal(err)
+		}
 
 	},
 }
@@ -90,10 +92,13 @@ func createBlog(ctx context.Context, path, localstore string, flags *pflag.FlagS
 		return err
 	}
 
-	post.Docpath, err = post.GenerateDocPath()
+	post.Docpath, err = post.GenerateDocPath(filestore.GetRootPath(fileHandler))
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("[After parsed] The post ID is: ", post.ID)
+	fmt.Println("[After parsed] The post docpath is: ", post.Docpath)
 
 	written, err := fileHandler.Write(ctx, post.Docpath, data)
 	if err != nil || len(data) != int(written) {
@@ -109,7 +114,7 @@ func createBlog(ctx context.Context, path, localstore string, flags *pflag.FlagS
 	return nil
 }
 
-func updateBlog(ctx context.Context, bid int, path string) error {
+func updateBlog(ctx context.Context, bid int, localstore, path string) error {
 
 	localService := services.NewBlogService()
 	blogDb := localService.Store.DB()
@@ -141,11 +146,14 @@ func updateBlog(ctx context.Context, bid int, path string) error {
 	// generate a slug because now we have a title.
 	blog.Slug = blog.GenerateSlug("")
 
-	fileHandler := filestore.NewGCPStore(false, 0)
+	fileHandler, err := filestore.NewInternalStore(localstore)
+	if err != nil {
+		return err
+	}
 
 	// TODO: Should probably delete here to be safe we're not
 	// gathering too unused files.
-	blog.Docpath, err = blog.GenerateDocPath()
+	blog.Docpath, err = blog.GenerateDocPath(filestore.GetRootPath(fileHandler))
 	if err != nil {
 		return err
 	}

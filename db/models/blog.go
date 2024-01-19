@@ -58,6 +58,17 @@ func (p *Blog) FromBlogInput(tx *gorm.DB, input *dtos.BlogInput) error {
 	p.Subtitle = input.Subtitle
 	p.Thumbnail = input.Thumbnail
 	p.ContentUrl = input.ContentUrl
+
+	if p.ID == 0 {
+		if err := tx.Create(p).Error; err != nil {
+			return err
+		}
+	} else {
+		if err := tx.Save(p).Error; err != nil {
+			return err
+		}
+	}
+
 	if len(input.Tags) > 0 {
 		err := p.ClearAssociations(tx, "Tags")
 		if err != nil {
@@ -143,10 +154,10 @@ func (p *Blog) generateBlogDir() (string, error) {
 	if len(datePathParts) != 3 {
 		return "", errors.New("blog model: generatestorageobject: invalid date path")
 	}
-	return fmt.Sprintf("blogs/%s", datePath), nil
+	return fmt.Sprintf("%s", datePath), nil
 }
 
-func (p *Blog) GenerateDocPath() (string, error) {
+func (p *Blog) GenerateDocPath(root string) (string, error) {
 
 	if p.Slug == "" {
 		if slug := p.GenerateSlug(""); slug == "" {
@@ -159,7 +170,7 @@ func (p *Blog) GenerateDocPath() (string, error) {
 		return "", err
 	}
 
-	obj := fmt.Sprintf("%s/%s", blogDir, p.generateFileName())
+	obj := fmt.Sprintf("%s/%s/%s", root, blogDir, p.generateFileName())
 
 	return obj, nil
 }
@@ -175,91 +186,6 @@ func (p *Blog) GenerateContentUrl() string {
 	return fmt.Sprintf("%s/%s/%s", baseUrl, p.Bucketname, p.Docpath)
 }
 
-/*
-
-// made private because this is dangerous.
-func (p *Blog) update(tx *gorm.DB) error {
-	return tx.Save(p).Error
-}
-
-
-
-func (p *Blog) FindBySlug(tx *gorm.DB, slug string, opts *repository.RepositoryOpts) error {
-	for name, opt := range opts.Preloads {
-		tx = tx.Preload(name, opt)
-	}
-	return tx.Where("slug = ?", slug).Find(p).Error
-}
-
-// TODO: Opts (limits etc..) Preloads
-func (p *Blog) FindByID(tx *gorm.DB, id int, opts *repository.RepositoryOpts) error {
-	return tx.First(p, id).Error
-}
-func (p *Blog) Query(tx *gorm.DB, query map[string]any, opts *repository.RepositoryOpts, out any) error {
-	return tx.Where(query).Find(out).Error
-}
-
-func (p *Blog) New(tx *gorm.DB) error {
-	return tx.Create(p).Error
-}
-
-func (p *Blog) Update(tx *gorm.DB, id int, body map[string]any) error {
-	return tx.Model(p).Where("id = ?", id).Updates(body).Error
-}
-
-// BEWARE!!! This method calls the method to make
-// an update from the object istelf while we have
-// the pointer.
-//
-// Update from the map is the recommended
-// choice. However, if you understand the risks here
-// I have decided to expose the UnsafeUpdate method
-func (p *Blog) UnsafeUpdate(tx *gorm.DB) error {
-	return p.update(tx)
-}
-
-func (p *Blog) Delete(tx *gorm.DB) error {
-	return tx.Delete(p).Error
-}
-
-func (p *Blog) DeleteById(tx *gorm.DB, id int) error {
-	return tx.Delete(p, id).Error
-}
-
-func (p *Blog) All(tx *gorm.DB, opts *repository.RepositoryOpts, out any) error {
-	if opts != nil {
-		for name, opt := range opts.Preloads {
-			tx = tx.Preload(name, opt)
-		}
-	}
-	return tx.Find(out).Error
-}
-
-func (p *Blog) FindAssociations(tx *gorm.DB, assoc string, query map[string]any, out repository.AssociationEntity) error {
-	if !out.ValidAssociation(p, assoc) {
-		return errors.New("blog model: findassociations: invalid association. Please verify the assoc value passed to this function and the out object.")
-	}
-	return tx.Model(p).Where(query).Association(assoc).Find(&out)
-}
-func (p *Blog) DeleteAssociation(tx *gorm.DB, assoc string, del ...repository.AssociationEntity) error {
-	return tx.Model(p).Association(assoc).Delete(del)
-}
-
-func (p *Blog) AddAssociations(tx *gorm.DB, assoc string, inc ...repository.AssociationEntity) error {
-	return tx.Model(p).Association(assoc).Append(inc)
-}
-
-func (p *Blog) AssociationCount(tx *gorm.DB, assoc string, out repository.AssociationEntity) (int64, error) {
-	return tx.Model(p).Association(assoc).Count(), nil
-}
-
-
-func (p *Blog) Raw(tx *gorm.DB, raw string, queryParams []any, opts *repository.RepositoryOpts) error {
-	return tx.Raw(raw, queryParams...).Find(p).Error
-}
-
-
-*/
 // TODO: Fill out this method.
 func (p *Blog) AfterDelete(tx *gorm.DB) error {
 	// Clean up Filestore
