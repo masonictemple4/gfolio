@@ -36,6 +36,17 @@ type Blog struct {
 }
 
 /*
+dir := path.Join(rootPath, post.Date.Format("2006/01/02"), slug.Make(post.Title))
+		if err := os.MkdirAll(dir, 0755); err != nil && err != os.ErrExist {
+			log.Fatalf("failed to create dir %q: %v", dir, err)
+		}
+
+		// Create the output file.
+		name := path.Join(dir, "index.html")
+		f, err := os.Create(name)
+*/
+
+/*
 func (p *Blog) FromBlogInput(tx *gorm.DB, input *dtos.BlogInput) error {
 	p.Title = input.Title
 	p.Subtitle = input.Subtitle
