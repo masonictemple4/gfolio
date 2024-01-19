@@ -35,6 +35,10 @@ func NewInternalStore(root string) (*InternalStore, error) {
 		return nil, err
 	}
 
+	if !strings.Contains("/home/mason/personal/masonictempl", root) {
+		root = "/home/mason/personal/masonictempl/" + strings.TrimPrefix(root, "/")
+	}
+
 	return &InternalStore{
 		root: root,
 	}, nil
@@ -46,13 +50,14 @@ func GetRootPath(i *InternalStore) string {
 	return urlFriendly
 }
 
-func (i *InternalStore) init(path string) error {
+func (i *InternalStore) init(path string, flag int) error {
 
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err
 	}
 
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	println("[Filestore (INIT)] Opening: ", path)
+	f, err := os.OpenFile(path, flag, 0755)
 	if err != nil {
 		return err
 	}
@@ -73,7 +78,9 @@ func (i *InternalStore) init(path string) error {
 func (i *InternalStore) Write(ctx context.Context, object string, p []byte) (n int64, err error) {
 	i.mu.Lock()
 
-	if err := i.init(object); err != nil {
+	// NOTE: Will replace the existing data.
+	// As soon as it opens, so only call write if necessary.
+	if err := i.init(object, os.O_RDWR|os.O_CREATE|os.O_TRUNC); err != nil {
 		return 0, err
 	}
 
@@ -106,7 +113,8 @@ func (i *InternalStore) Read(ctx context.Context, path string) ([]byte, error) {
 	defer i.reset()
 	defer i.mu.Unlock()
 
-	if err := i.init(path); err != nil {
+	println("[Filestore (READ)] Calling init from path: ", path)
+	if err := i.init(path, os.O_RDONLY); err != nil {
 		return nil, err
 	}
 
@@ -114,6 +122,8 @@ func (i *InternalStore) Read(ctx context.Context, path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Printf("[Filestore (READ)] Data: %s\n", string(data))
 
 	return data, nil
 }
@@ -134,10 +144,6 @@ func (i *InternalStore) Delete(ctx context.Context, path string) error {
 func (i *InternalStore) reset() error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
-
-	if err := i.buf.Flush(); err != nil {
-		return err
-	}
 
 	i.buf = nil
 	i.size = 0

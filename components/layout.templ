@@ -10,7 +10,7 @@ templ Page(title string, meta map[string]string) {
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&subset=latin&display=swap" rel="stylesheet" />
       <link href="/assets/main.css" rel="stylesheet" />
       <title>{ title }</title>
-      <script src="/assets/htmx.min.js"></script>
+      <script src="/assets/htmx.min.js"> </script>
     </head>
     <body>
       if getPathCtx(ctx) == "/" {
@@ -34,7 +34,7 @@ func getPathCtx(ctx context.Context) string {
 templ MainLayout(title string) {
   <main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full min-h-full">
     @Navbar(false, nil)
-    <section class="flex-grow mt-8">
+    <section class="flex-grow mt-8 max-w-screen w-full min-w-full">
       // @PageHeader("", title)
       { children... }
     </section>
@@ -44,19 +44,22 @@ templ MainLayout(title string) {
 
 
 templ BlogLayout(title string, disableBreadcrumbs bool) {
-  @MainLayout(title) {
-    <section class="container">
-      @PageHeader("", title)
-      // <PageHeader plainText={''} gradientText={title} />
-      if !disableBreadcrumbs {
-        // TODO: Breadcrumbs component
-        // <BreadCrumbs />
-        @Breadcrumbs(getPathCtx(ctx))
-      }
-      <div className="w-2/3 mx-auto p-6">
-      {children...}
+  @MainLayout(determineBlogLayoutTitle(disableBreadcrumbs)) {
+      @PageHeader("", determineBlogLayoutTitle(disableBreadcrumbs))
+      <div class="w-2/3 mx-auto p-6">
+        if !disableBreadcrumbs {
+          @Breadcrumbs(getPathCtx(ctx))
+        }
+        {children...}
       </div>
-    </section>
   }
 
+}
+
+func determineBlogLayoutTitle(disableBreadcrumbs bool) string {
+  if disableBreadcrumbs {
+    return "The Ledger"
+  } else {
+    return "The Software Engineer's Quarry"
+  }
 }

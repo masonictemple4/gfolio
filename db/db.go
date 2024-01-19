@@ -115,6 +115,16 @@ func (bs *BlogStore) FindByID(tx *gorm.DB, b *models.Blog, bid int) error {
 	return tx.First(b, bid).Error
 }
 
+func (bs *BlogStore) FindBySlug(b *models.Blog, slug string, preloads ...string) error {
+	tx := bs.db
+
+	for _, preload := range preloads {
+		tx = tx.Preload(preload)
+	}
+
+	return tx.Where("slug = ?", slug).First(b).Error
+}
+
 /*
 type OptionsFunc func(*CountStore)
 

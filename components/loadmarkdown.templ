@@ -1,0 +1,5 @@
+package components
+
+script LoadMarkdown(id string, content string) {
+    document.getElementById(id).innerHTML = marked.parse(content);
+}

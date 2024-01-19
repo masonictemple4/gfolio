@@ -58,6 +58,7 @@ func (p *Blog) FromBlogInput(tx *gorm.DB, input *dtos.BlogInput) error {
 	p.Subtitle = input.Subtitle
 	p.Thumbnail = input.Thumbnail
 	p.ContentUrl = input.ContentUrl
+	p.Description = input.Description
 
 	if p.ID == 0 {
 		if err := tx.Create(p).Error; err != nil {
@@ -181,8 +182,9 @@ func (p *Blog) GenerateContentUrl() string {
 	if baseUrl == "" {
 		// With no bucket this will default to the
 		// internal static file server path.
-		return p.Docpath
+		return strings.TrimPrefix(p.Docpath, "/home/mason/personal/masonictempl")
 	}
+
 	return fmt.Sprintf("%s/%s/%s", baseUrl, p.Bucketname, p.Docpath)
 }
 

@@ -14,7 +14,7 @@ templ BlogList(blogs []models.Blog) {
 }
 
 templ blogListContent(blogs []models.Blog) {
-     <ul class="flex flex-col items-center w-full min-w-full max-w-full">
+     <ul class="flex mt-6 flex-col items-center w-full min-w-full max-w-full">
        for _, blog := range blogs {
          @BlogCard(blog)
        }
@@ -52,3 +52,52 @@ func tagsToString(tags []models.Tag) string {
   }
   return strings.Join(tagNames, ", ")
 }
+
+templ BlogDetail(blog models.Blog, bodyStr string) {
+  @Page(blog.Title, nil) {
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    @BlogDetailHeader(blog)
+    @BlogDetailContent(bodyStr)
+  }
+}
+
+templ BlogDetailHeader(blog models.Blog) {
+  <header class="mb-4 lg:mb-6 not-format">
+    @LineSeparator()
+    <h1 class="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">{strings.ToTitle(blog.Subtitle)}</h1>
+    <p class="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">{blog.Description}</p>
+    <address class="flex items-center my-6 not-italic">
+      <div class="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
+        if len(blog.Authors) > 1 {
+          <img class="mr-4 w-16 h-16 rounded-full" src={fmt.Sprintf("/%s", blog.Authors[0].ProfilePicture)} alt="Jese Leos" />
+        } else {
+          <img class="mr-4 w-16 h-16 rounded-full" src="/assets/images/profilePicture.jpg" alt="Jese Leos" />
+        }
+      <div>
+        for _, author := range blog.Authors {
+          <span href="" rel="author" class="text-xl font-bold text-gray-900 dark:text-white">{author.Username}</span>
+        }
+        <p class="text-base text-gray-500 dark:text-gray-400">
+          {blog.CreatedAt.Format("2006-01-02 15:04:05")}
+        </p>
+      </div>
+      </div>
+    </address>
+    <div class="flex flex-row flex-wrap items-center my-4">
+      for _, tag := range blog.Tags {
+        <button type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" key={tag.Name}>{tag.Name}</button>
+      }
+  </div>
+  @LineSeparator()
+  </header>
+  
+
+}
+
+templ BlogDetailContent(blogContent string) {
+  <div id="markdown-content" class="prose dark:prose-dark max-w-none">
+  </div>
+  @LoadMarkdown("markdown-content", blogContent)
+}
+
+

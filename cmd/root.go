@@ -12,6 +12,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/masonictemple4/masonictempl/components"
 	"github.com/masonictemple4/masonictempl/handlers"
+	"github.com/masonictemple4/masonictempl/internal/filestore"
 	"github.com/spf13/cobra"
 )
 
@@ -84,7 +85,13 @@ func startServer() {
 	// Like first specifying the store, then the service, then the handler.
 	hndlr := handlers.NewDefaultHandler()
 	hndlr.AssetPath = *staticPtr
-	blogHandler := handlers.NewBlogsHandler()
+
+	fh, err := filestore.NewInternalStore(*staticPtr)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	blogHandler := handlers.NewBlogsHandler(fh)
 	hndlr.Routes = map[string]http.Handler{
 		"assets": http.StripPrefix(fsStr, fs),
 		"/":      templ.Handler(components.Index()),

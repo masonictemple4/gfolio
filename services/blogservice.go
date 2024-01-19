@@ -30,6 +30,14 @@ func (b *BlogService) List(ctx context.Context) []models.Blog {
 	return blogs
 }
 
+func (b *BlogService) GetWithSlug(ctx context.Context, slug string, preloads ...string) (*models.Blog, error) {
+	var blog models.Blog
+	if err := b.Store.FindBySlug(&blog, slug, preloads...); err != nil {
+		return nil, err
+	}
+	return &blog, nil
+}
+
 /*
 var ErrUnknownIncrementType error = errors.New("unknown increment type")
 

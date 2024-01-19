@@ -7,6 +7,22 @@ import (
 	"github.com/masonictemple4/masonictempl/internal/dtos"
 )
 
+func TestSkipFrontmatter(t *testing.T) {
+	fp := ""
+
+	data, err := os.ReadFile(fp)
+	if err != nil {
+		t.Errorf("there was an error opening the file: %v", err)
+	}
+
+	newData, err := SkipFrontmatter(data)
+	if err != nil {
+		t.Errorf("there was an error skipping the frontmatter: %v", err)
+	}
+
+	t.Logf("New data: %s\n", string(newData))
+}
+
 func TestStandaloneParser(t *testing.T) {
 
 	// TODO: Create some test blogs to go against and replace the second string

@@ -136,3 +136,50 @@ func ParseFile[K any](path string, result K) error {
 
 	return nil
 }
+
+func SkipFrontmatter(data []byte) ([]byte, error) {
+	fmFormat := NewYamlFrontMatterFormat()
+	out := bytes.NewBuffer(nil)
+
+	skipping := false
+
+	rdr := bufio.NewReader(bytes.NewReader(data))
+
+	for {
+		line, err := rdr.ReadBytes('\n')
+		if err != nil && err != io.EOF {
+			return nil, err
+		}
+		if err != nil && err == io.EOF {
+			return out.Bytes(), nil
+		}
+
+		line = bytes.TrimSuffix(line, []byte("\n"))
+
+		if !skipping && string(line) == fmFormat.Begin {
+			skipping = true
+			continue
+		}
+
+		if skipping && string(line) != fmFormat.End {
+			continue
+		}
+
+		if skipping && string(line) == fmFormat.End {
+			skipping = false
+			continue
+		}
+
+		line = append(line, []byte("\n")...)
+		_, err = out.Write(line)
+		if err != nil {
+			return nil, err
+		}
+
+	}
+
+	// need to decode here as well because the file will most likely
+	// have data beyond the frontmatter.
+
+	// return out.Bytes(), nil
+}

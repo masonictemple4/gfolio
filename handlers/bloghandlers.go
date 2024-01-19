@@ -5,30 +5,57 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/masonictemple4/masonictempl/components"
+	"github.com/masonictemple4/masonictempl/internal/filestore"
+	"github.com/masonictemple4/masonictempl/internal/parser"
 	"github.com/masonictemple4/masonictempl/services"
 )
 
-func NewBlogsHandler() BlogsHandler {
+func NewBlogsHandler(fh filestore.Filestore) BlogsHandler {
 	// Include source path to the error or calling function in the log output.
 	lgr := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 	return BlogsHandler{
 		Log:         lgr,
 		BlogService: services.NewBlogService(),
+		Filehandler: fh,
 	}
 }
 
 type BlogsHandler struct {
 	Log         *slog.Logger
+	Filehandler filestore.Filestore
 	BlogService *services.BlogService
 }
 
 func (bh BlogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	blogs := bh.BlogService.List(r.Context())
+	urlParts := strings.Split(strings.TrimPrefix(r.URL.Path, "/"), "/")
 
-	fmt.Printf("BlogsHandler: %+v\n", blogs)
+	if len(urlParts) > 1 && !strings.Contains(strings.TrimPrefix(r.URL.Path, "/"), "assets") {
+		blog, err := bh.BlogService.GetWithSlug(r.Context(), urlParts[len(urlParts)-1], "Authors", "Tags", "Media")
+		if err != nil {
+			fmt.Printf("Error getting blog: %v\n", err)
+		}
+
+		if bh.Filehandler == nil {
+			fmt.Printf("Filehandler is nil\n")
+		}
+
+		fp := strings.Replace(blog.Docpath, "./", "", 1)
+		blogData, err := bh.Filehandler.Read(r.Context(), fp)
+		// blogData, err := os.ReadFile()
+		if err != nil {
+			fmt.Printf("Error reading blog: %v\n", err)
+		}
+
+		cleanData, _ := parser.SkipFrontmatter(blogData)
+
+		templ.Handler(components.BlogDetail(*blog, string(cleanData))).ServeHTTP(w, r)
+		return
+	}
 
 	templ.Handler(components.BlogList(blogs)).ServeHTTP(w, r)
 }
