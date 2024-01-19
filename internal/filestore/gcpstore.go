@@ -19,12 +19,15 @@ var _ Filestore = (*GCPStore)(nil)
 type GCPStore struct {
 	ProgressEnabled bool
 	ChunkSize       int64
+	root            string
 }
 
+// TODO: Actually set root
 func NewGCPStore(progress bool, chunk int64) *GCPStore {
 	return &GCPStore{
 		ProgressEnabled: progress,
 		ChunkSize:       chunk,
+		root:            "/",
 	}
 }
 

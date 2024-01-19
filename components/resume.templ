@@ -1,0 +1,21 @@
+package components
+
+import (
+	"path/filepath"
+)
+
+templ Resume(pdfPath, resumeContentStr string) {
+	@Page("Resume", nil) {
+		<div class="flex flex-row items-center w-full max-w-full min-w-full">
+			<a href={ templ.SafeURL(pdfPath) } target="_blank" download={ filepath.Base(pdfPath) } class="flex items-center justify-center w-full font-bold py-2 px-4 rounded border border-gray-200 hover:ring hover:ring-sky-400 hover:ring-offset-emerald-600">
+				<svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+					<path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"></path>
+				</svg>
+				<span>Download</span>
+			</a>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<div id="resume-content" class="prose w-full min-w-full max-w-full dark:prose-invert"></div>
+		@LoadMarkdown("resume-content", resumeContentStr)
+	}
+}

@@ -1,67 +1,83 @@
 package components
 
+import (
+  "strings"
+)
+
 templ Page(title string, meta map[string]string) {
-	<!DOCTYPE html>
-	<html>
-		<head>
-			<meta charset="utf-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&subset=latin&display=swap" rel="stylesheet"/>
-			<link href="/assets/main.css" rel="stylesheet"/>
-			<title>{ title }</title>
-			<script src="/assets/htmx.min.js"> </script>
-		</head>
-		<body>
-			if getPathCtx(ctx) == "/" {
-				@MainLayout(title, true) {
-					{ children... }
-				}
-			} else {
-				@BlogLayout(title, false) {
-					{ children... }
-				}
-			}
-		</body>
-	</html>
+  <!DOCTYPE html>
+  <html>
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&subset=latin&display=swap"
+      rel="stylesheet" />
+    <link href="/assets/main.css" rel="stylesheet" />
+    <title>{ title }</title>
+    <script src="/assets/htmx.min.js"> </script>
+  </head>
+
+  <body>
+    if getPathCtx(ctx) == "/" {
+      @MainLayout(title, true) {
+        { children... }
+      }
+    } else {
+      @BlogLayout(title, generateBreadCrumbsState(getPathCtx(ctx))) {
+        { children... }
+      }
+    }
+  </body>
+
+  </html>
 }
 
-func getPathCtx(ctx context.Context) string {
-	return ctx.Value("path").(string)
-}
 
 templ MainLayout(title string, index bool) {
-	<main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full min-h-full">
-		@Navbar(false, nil)
-		if index {
-			<section class="flex-grow mt-8 max-w-screen w-2/5 min-w-2/5">
-				{ children... }
-			</section>
-		} else {
-			<section class="flex-grow mt-8 max-w-screen w-full min-w-full">
-				{ children... }
-			</section>
-		}
-		// @PageHeader("", title)
-		@Footer(WithDefaultLinks()...)
-	</main>
+<main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full min-h-full">
+  @Navbar(false, nil)
+  if index {
+  <section class="flex-grow mt-8 max-w-screen w-2/5 min-w-2/5">
+    { children... }
+  </section>
+  } else {
+  <section class="flex-grow mt-8 max-w-screen w-full min-w-full">
+    { children... }
+  </section>
+  }
+  // @PageHeader("", title)
+  @Footer(WithDefaultLinks()...)
+</main>
 }
 
 templ BlogLayout(title string, disableBreadcrumbs bool) {
-	@MainLayout(determineBlogLayoutTitle(disableBreadcrumbs), false) {
-		@PageHeader("", determineBlogLayoutTitle(disableBreadcrumbs))
-		<div class="w-2/3 mx-auto p-6">
-			if !disableBreadcrumbs {
-				@Breadcrumbs(getPathCtx(ctx))
-			}
-			{ children... }
-		</div>
-	}
+  @MainLayout(determineBlogLayoutTitle(disableBreadcrumbs), false) {
+  @PageHeader("", determineBlogLayoutTitle(disableBreadcrumbs))
+  <div class="w-2/3 mx-auto p-6">
+    if !disableBreadcrumbs {
+    @Breadcrumbs(getPathCtx(ctx))
+    }
+    { children... }
+  </div>
+  }
 }
 
 func determineBlogLayoutTitle(disableBreadcrumbs bool) string {
-	if disableBreadcrumbs {
-		return "The Ledger"
-	} else {
-		return "The Software Engineer's Quarry"
-	}
+  if disableBreadcrumbs {
+    return "The Ledger"
+  } else {
+    return "The Software Engineer's Quarry"
+  }
+}
+
+func getPathCtx(ctx context.Context) string {
+  return ctx.Value("path").(string)
+}
+
+func generateBreadCrumbsState(path string) bool {
+  if strings.Contains(path, "/resume")  {
+    return true
+  } 
+  return false
 }

@@ -95,7 +95,7 @@ func DefaultNav(links []NavLink) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(link.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav.templ`, Line: 33, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav.templ`, Line: 31, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -120,11 +120,11 @@ func DefaultNav(links []NavLink) templ.Component {
 func WithDefaultNav() []NavLink {
 	return []NavLink{
 		{Url: "/", Target: "", Text: "home", Icon: ""},
+		{Url: "/blog", Target: "", Text: "blog", Icon: ""},
+		{Url: "/resume", Target: "_self", Text: "resume", Icon: ""},
 		{Url: "https://github.com/masonictemple4", Target: "_blank", Text: "github", Icon: ""},
 		{Url: "https://www.linkedin.com/in/mason-tucker-290b2b128/", Target: "_blank", Text: "linkedin", Icon: ""},
-		{Url: "/resume", Target: "_self", Text: "resume", Icon: ""},
 		{Url: "https://twitter.com/masonictemple4", Target: "_blank", Text: "x/twitter", Icon: ""},
-		{Url: "/blog", Target: "", Text: "blog", Icon: ""},
 	}
 }
 
@@ -154,7 +154,7 @@ func Breadcrumbs(path string) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(segment)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav.templ`, Line: 58, Col: 26}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav.templ`, Line: 54, Col: 20}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -190,7 +190,7 @@ func Breadcrumbs(path string) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(segment)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav.templ`, Line: 63, Col: 67}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/nav.templ`, Line: 59, Col: 60}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {

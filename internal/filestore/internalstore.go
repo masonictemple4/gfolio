@@ -43,12 +43,6 @@ func NewInternalStore(root string) (*InternalStore, error) {
 	}, nil
 }
 
-func GetRootPath(i *InternalStore) string {
-	urlFriendly := strings.TrimPrefix(i.root, "./")
-
-	return urlFriendly
-}
-
 func (i *InternalStore) init(path string, flag int) error {
 
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
