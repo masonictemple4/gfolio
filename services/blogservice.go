@@ -22,7 +22,7 @@ func NewBlogService() *BlogService {
 
 func (b *BlogService) List(ctx context.Context) []models.Blog {
 	blogs := make([]models.Blog, 0)
-	if err := b.Store.ListBlogs(&blogs, nil, nil); err != nil {
+	if err := b.Store.ListBlogs(&blogs, nil, nil, "Authors", "Tags"); err != nil {
 		// TODO: Log the error
 		return blogs
 	}

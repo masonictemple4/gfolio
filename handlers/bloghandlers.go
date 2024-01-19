@@ -25,10 +25,10 @@ type BlogsHandler struct {
 	BlogService *services.BlogService
 }
 
-func (ph BlogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ps := ph.BlogService.List(r.Context())
+func (bh BlogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	blogs := bh.BlogService.List(r.Context())
 
-	fmt.Printf("BlogsHandler: %+v\n", ps)
+	fmt.Printf("BlogsHandler: %+v\n", blogs)
 
-	templ.Handler(components.Index()).ServeHTTP(w, r)
+	templ.Handler(components.BlogList(blogs)).ServeHTTP(w, r)
 }
