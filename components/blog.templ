@@ -32,7 +32,7 @@ templ BlogCard(blog models.Blog) {
 
           <div class="flex flex-row flex-wrap justify-between">
             <span class="text-gray-400 text-left">
-              {blog.CreatedAt.Format("2006-01-02 15:04:05")}
+              {blog.CreatedAt.Format("Jan 06, 2006")}
             </span>
             <span class="flex-wrap text-gray-400 text-right">
               {tagsToString(blog.Tags)}
@@ -78,7 +78,7 @@ templ BlogDetailHeader(blog models.Blog) {
           <span href="" rel="author" class="text-xl font-bold text-gray-900 dark:text-white">{author.Username}</span>
         }
         <p class="text-base text-gray-500 dark:text-gray-400">
-          {blog.CreatedAt.Format("2006-01-02 15:04:05")}
+          {blog.CreatedAt.Format("Jan 06, 2006 3:04PM")}
         </p>
       </div>
       </div>

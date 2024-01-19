@@ -165,9 +165,9 @@ func BlogCard(blog models.Blog) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
-		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(blog.CreatedAt.Format("2006-01-02 15:04:05"))
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(blog.CreatedAt.Format("Jan 06, 2006"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/blog.templ`, Line: 34, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/blog.templ`, Line: 34, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -363,7 +363,7 @@ func BlogDetailHeader(blog models.Blog) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(blog.CreatedAt.Format("2006-01-02 15:04:05"))
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(blog.CreatedAt.Format("Jan 06, 2006 3:04PM"))
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/blog.templ`, Line: 80, Col: 55}
 		}

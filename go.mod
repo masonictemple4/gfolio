@@ -1,6 +1,6 @@
 module github.com/masonictemple4/masonictempl
 
-go 1.21.5
+go 1.21
 
 require (
 	cloud.google.com/go v0.110.8 // indirect
