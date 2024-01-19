@@ -46,7 +46,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	hostPtr = rootCmd.Flags().String("host", "", "host to serve on")
-	portPtr = rootCmd.Flags().String("port", "8080", "port to serve on")
+	portPtr = rootCmd.Flags().String("port", os.Getenv("PORT"), "port to serve on")
 	staticPtr = rootCmd.Flags().String("static", "assets", "path to static files directory.")
 }
 
