@@ -1,30 +1,26 @@
 package components
 
 var testimonialCardData map[string]string = map[string]string{
-  "body": "Mason is an incredible back-end Software Engineer with an unmatched passion for coding, and skills to match! Mason is equally comfortable in macro and micro perspectives, having the rare ability to design and build entire systems, while continuously expanding upon the overall vision, as well as refining the technical foundations necessary to make it all function. At Listella he turned ideas into products, at every level. He strives to be an incredible teammate, and always available to help guide fellow engineers to reach their potential.",
-    "profilepic": "/assets/images/markmckelvie.jpeg",
-    "name": "Mark Mckelvie",
-    "position": "Senior iOS Engineer Listella",
+	"body":       "Mason is an incredible back-end Software Engineer with an unmatched passion for coding, and skills to match! Mason is equally comfortable in macro and micro perspectives, having the rare ability to design and build entire systems, while continuously expanding upon the overall vision, as well as refining the technical foundations necessary to make it all function. At Listella he turned ideas into products, at every level. He strives to be an incredible teammate, and always available to help guide fellow engineers to reach their potential.",
+	"profilepic": "/assets/images/markmckelvie.jpeg",
+	"name":       "Mark Mckelvie",
+	"position":   "Senior iOS Engineer Listella",
 }
 
 templ defaultHomeContent() {
-      <h1 class="text-center">Welcome &#128075; to my portfolio</h1>
-      <div class="flex flex-col items-center mt-4">
-        <img class="rounded-full w-100px h-100px" src="/assets/images/profilePicture.jpg" alt="Profile picture" />
-        <p class="text-center max-w-lg mt-6">
-        With over 7 years of experience in high risk, fast paced start-up environments. Proven track record of developing and deploying backend systems and  applications with a focus on scalability, reliability, and performance.
-        </p>
-      </div>
-
-     @LineSeparator()
-     @TestimonialCard(testimonialCardData["body"], testimonialCardData["profilepic"], testimonialCardData["name"], testimonialCardData["position"])
+	<h1 class="text-center">Welcome &#128075; to my portfolio</h1>
+	<div class="flex flex-col items-center mt-4">
+		<img class="rounded-full w-100px h-100px" src="/assets/images/profilePicture.jpg" alt="Profile picture"/>
+		<p class="text-center max-w-lg mt-6">
+			With over 7 years of experience in high risk, fast paced start-up environments. Proven track record of developing and deploying backend systems and  applications with a focus on scalability, reliability, and performance.
+		</p>
+	</div>
+	@LineSeparator()
+	@TestimonialCard(testimonialCardData["body"], testimonialCardData["profilepic"], testimonialCardData["name"], testimonialCardData["position"])
 }
 
-
-
-
 templ Index() {
-  @Page("home", nil) {
-    @defaultHomeContent()
-  }
+	@Page("Masonictemple4Codes", nil) {
+		@defaultHomeContent()
+	}
 }

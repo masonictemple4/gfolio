@@ -23,7 +23,7 @@ func LineSeparator() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<hr class=\"max-w-full min-w-full w-100 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<hr class=\"max-w-full w-100 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
