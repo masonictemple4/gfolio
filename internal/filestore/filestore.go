@@ -15,6 +15,7 @@ type Filestore interface {
 	Delete(ctx context.Context, path string) error
 }
 
+// Returns the fully qualified path for the root of the filestore.
 func GetRootPath(i Filestore) string {
 	var res string
 	switch i.(type) {

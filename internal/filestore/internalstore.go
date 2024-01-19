@@ -29,17 +29,48 @@ type InternalStore struct {
 	root string
 }
 
-func NewInternalStore(root string) (*InternalStore, error) {
-	if err := os.MkdirAll(root, 0755); err != nil {
+// NewInternalStore creates a new internal store
+// and returns a pointer to it.
+//
+// Important: Requires current working directory.
+//
+// Note: Passing a value here overrides env ASSET_DIR
+// and if that is not set either, we default to "assets".
+//
+// "/" is not an eligible path for internal/local storage.
+// However, this can be used in remote storages as the root.
+//
+// You can leave assetRoot empty or fill it with os.Getenv("ASSET_DIR")
+// when implenting. That or replace it with the directory name for your
+// public files..
+func NewInternalStore(assetRoot string) (*InternalStore, error) {
+	if assetRoot == "" {
+		if val := os.Getenv("ASSET_DIR"); val != "" && val != "/" {
+			assetRoot = val
+		} else {
+			assetRoot = "assets"
+		}
+	}
+
+	wd, err := os.Getwd()
+	if err != nil {
 		return nil, err
 	}
 
-	if !strings.Contains("/home/mason/personal/masonictempl", root) {
-		root = "/home/mason/personal/masonictempl/" + strings.TrimPrefix(root, "/")
+	if !strings.Contains(wd, assetRoot) {
+		if strings.HasSuffix(wd, "/") {
+			assetRoot = wd + strings.TrimPrefix(assetRoot, "/")
+		} else {
+			assetRoot = wd + "/" + strings.TrimPrefix(assetRoot, "/")
+		}
+	}
+
+	if err := os.MkdirAll(assetRoot, 0755); err != nil {
+		return nil, err
 	}
 
 	return &InternalStore{
-		root: root,
+		root: assetRoot,
 	}, nil
 }
 

@@ -155,10 +155,21 @@ func (p *Blog) generateBlogDir() (string, error) {
 	if len(datePathParts) != 3 {
 		return "", errors.New("blog model: generatestorageobject: invalid date path")
 	}
-	return fmt.Sprintf("%s", datePath), nil
+
+	blogRoot := "blogs"
+	if val := os.Getenv("BLOG_ROOT"); val != "" {
+		blogRoot = os.Getenv("BLOG_ROOT")
+	}
+
+	blogRoot = strings.TrimSuffix(blogRoot, "/")
+
+	return fmt.Sprintf("%s/%s", blogRoot, datePath), nil
 }
 
-func (p *Blog) GenerateDocPath(root string) (string, error) {
+// Returns fully qualified path for the blog's doc path
+// This is the location on the filesystem. Use this when
+// interacting directly with the file.
+func (p *Blog) GenerateDocPath(assetRoot string) (string, error) {
 
 	if p.Slug == "" {
 		if slug := p.GenerateSlug(""); slug == "" {
@@ -171,18 +182,23 @@ func (p *Blog) GenerateDocPath(root string) (string, error) {
 		return "", err
 	}
 
-	obj := fmt.Sprintf("%s/%s/%s", root, blogDir, p.generateFileName())
+	obj := fmt.Sprintf("%s/%s/%s", assetRoot, blogDir, p.generateFileName())
 
 	return obj, nil
 }
 
 // Requires Bucketname
+// This is what you would request in href or src attributes.
+// the public path for the file essentially.
+// Locally this is served with the path handled with a local fileserver.
+// Otherwise this will typically be a url for the bucket.
 func (p *Blog) GenerateContentUrl() string {
 	baseUrl := os.Getenv("BUCKET_BASE_URL")
 	if baseUrl == "" {
 		// With no bucket this will default to the
 		// internal static file server path.
-		return strings.TrimPrefix(p.Docpath, "/home/mason/personal/masonictempl")
+		wd, _ := os.Getwd()
+		return strings.Replace(p.Docpath, wd, "", 1)
 	}
 
 	return fmt.Sprintf("%s/%s/%s", baseUrl, p.Bucketname, p.Docpath)

@@ -1,4 +1,4 @@
-PROJ_DIR=/home/mason/personal/gfolio
+PROJ_DIR=~/personal/masonictempl
 
 install:
 	go install

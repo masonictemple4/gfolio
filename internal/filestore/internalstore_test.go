@@ -2,8 +2,62 @@ package filestore
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
+
+const curPath = "internal/filestore"
+
+func TestPathing(t *testing.T) {
+	t.Run("[Internal store] Freehand path expiriments", func(t *testing.T) {
+		workingDir, err := os.Getwd()
+		if err != nil {
+			t.Errorf("there was an error getting the current directory: %v", err)
+		}
+
+		t.Logf("Working dir Pre-Correction: %s", workingDir)
+		workingDir = strings.TrimSuffix(workingDir, curPath)
+
+		t.Logf("Working dir Post-Correction: %s", workingDir)
+
+		assetDir := os.Getenv("ASSET_DIR")
+
+		if assetDir == "" {
+			assetDir = "assets"
+		}
+
+		var root string
+		t.Logf("Before: %s", assetDir)
+		if !strings.Contains(workingDir, assetDir) {
+			root = workingDir + strings.TrimPrefix(assetDir, "/")
+		}
+		t.Logf("After: %s", root)
+
+	})
+	t.Run("[Internal store] New Internal Store", func(t *testing.T) {
+		err := os.Setenv("ASSET_DIR", "share")
+		if err != nil {
+			t.Errorf("there was an error setting the env variable: %v", err)
+		}
+
+		assetDir := os.Getenv("ASSET_DIR")
+
+		if assetDir == "" {
+			assetDir = "assets"
+		}
+
+		store, err := NewInternalStore(assetDir)
+		if err != nil {
+			t.Errorf("there was an error creating the internal store: %v", err)
+		}
+
+		// Remember to replace the curPath because we're running inside
+		// the package directory.
+		t.Logf("Store root: %s", strings.Replace(store.root, curPath, "", 1))
+
+	})
+
+}
 
 func TestInternalStore(t *testing.T) {
 
