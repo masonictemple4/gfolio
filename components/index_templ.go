@@ -43,7 +43,7 @@ func defaultHomeContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var3 := `With over 7 years of experience in high risk, fast paced start-up environments. Proven track record of developing and deploying backend systems and  applications with a focus on scalability, reliability, and performance.`
+		templ_7745c5c3_Var3 := `Senior Software engineer with 7+ years of experience in high risk, fast paced startup environments. Proven track record of developing and deploying backend systems and applications with a focus on scalability, reliability, and performance.`
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

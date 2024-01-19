@@ -92,11 +92,15 @@ func startServer() {
 	}
 
 	blogHandler := handlers.NewBlogsHandler(fh)
+
+	resumeHandler := handlers.NewResumeHandler(fh)
+
 	hndlr.Routes = map[string]http.Handler{
 		"assets": http.StripPrefix(fsStr, fs),
 		"/":      templ.Handler(components.Index()),
 		"":       templ.Handler(components.Index()),
 		"blog":   blogHandler,
+		"resume": resumeHandler,
 	}
 
 	server := &http.Server{

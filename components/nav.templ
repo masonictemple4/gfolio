@@ -1,74 +1,69 @@
 package components
 
 import (
-  "strings"
-  "fmt"
+	"strings"
+	"fmt"
 )
 
 type NavLink struct {
-  Url string
-  Target string
-  Text string
-  Icon string
+	Url    string
+	Target string
+	Text   string
+	Icon   string
 }
 
-
 templ Navbar(useCustomNav bool, navComponent templ.Component) {
-  if useCustomNav && navComponent != nil {
-    @navComponent
-  } else {
-    @DefaultNav(WithDefaultNav())
-  }
+	if useCustomNav && navComponent != nil {
+		@navComponent
+	} else {
+		@DefaultNav(WithDefaultNav())
+	}
 }
 
 templ DefaultNav(links []NavLink) {
-  
-  <ul class="flex flex-wrap items-center justify-center mt-4">
-    for _, link := range links {
-      <li class="mr-6">
-        <a 
-          class="text-link-blue hover:underline underline-offset-4 hover:font-bold"
-          href={templ.SafeURL(link.Url)}
-          target={link.Target}
-        >
-          { link.Text }
-        </a>
-      </li>
-    }
-  </ul>
-
+	<ul class="flex flex-wrap items-center justify-center mt-4">
+		for _, link := range links {
+			<li class="mr-6">
+				<a
+					class="text-link-blue hover:underline underline-offset-4 hover:font-bold"
+					href={ templ.SafeURL(link.Url) }
+					target={ link.Target }
+				>
+					{ link.Text }
+				</a>
+			</li>
+		}
+	</ul>
 }
 
 func WithDefaultNav() []NavLink {
-  return []NavLink{
-    {Url: "/", Target: "", Text: "home", Icon: ""},
-    {Url: "https://github.com/masonictemple4", Target: "_blank", Text: "github", Icon: ""},
-    {Url: "https://www.linkedin.com/in/mason-tucker-290b2b128/", Target: "_blank", Text: "linkedin", Icon: ""},
-    {Url: "/resume", Target: "_self", Text: "resume", Icon: ""},
-    {Url: "https://twitter.com/masonictemple4", Target: "_blank", Text: "x/twitter", Icon: ""},
-    {Url: "/blog", Target: "", Text: "blog", Icon: ""},
-  }
+	return []NavLink{
+		{Url: "/", Target: "", Text: "home", Icon: ""},
+		{Url: "/blog", Target: "", Text: "blog", Icon: ""},
+		{Url: "/resume", Target: "_self", Text: "resume", Icon: ""},
+		{Url: "https://github.com/masonictemple4", Target: "_blank", Text: "github", Icon: ""},
+		{Url: "https://www.linkedin.com/in/mason-tucker-290b2b128/", Target: "_blank", Text: "linkedin", Icon: ""},
+		{Url: "https://twitter.com/masonictemple4", Target: "_blank", Text: "x/twitter", Icon: ""},
+	}
 }
 
 templ Breadcrumbs(path string) {
-
-    <ul class="flex w-2/3 items-start mt-6">
-      for index, segment := range strings.Split(strings.TrimPrefix(path, "/"), "/") {
-         if index == (len(strings.Split(strings.TrimPrefix(path, "/"), "/")) - 1) {
-          <li>
-            <span>{segment} /</span>
-          </li>
-        } else {
-          <li>
-            <a href={templ.SafeURL(fmt.Sprintf("/%s", segment))}>
-              <span class="text-link-blue hover:underline">{segment}</span>
-            </a>
-          </li>
-          <li>
-            <span class="mx-2"> /</span>  // Delimiter
-          </li>
-        } 
-      }
-    </ul>
-
+	<ul class="flex w-2/3 items-start mt-6">
+		for index, segment := range strings.Split(strings.TrimPrefix(path, "/"), "/") {
+			if index == (len(strings.Split(strings.TrimPrefix(path, "/"), "/")) - 1) {
+				<li>
+					<span>{ segment } /</span>
+				</li>
+			} else {
+				<li>
+					<a href={ templ.SafeURL(fmt.Sprintf("/%s", segment)) }>
+						<span class="text-link-blue hover:underline">{ segment }</span>
+					</a>
+				</li>
+				<li>
+					<span class="mx-2">/</span> // Delimiter
+				</li>
+			}
+		}
+	</ul>
 }
