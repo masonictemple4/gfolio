@@ -147,8 +147,8 @@ func Breadcrumbs(path string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for index, segment := range strings.Split(path, "/") {
-			if index == len(strings.Split(path, "/"))-1 {
+		for index, segment := range strings.Split(strings.TrimPrefix(path, "/"), "/") {
+			if index == 0 {
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -180,7 +180,7 @@ func Breadcrumbs(path string) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var8 templ.SafeURL = templ.SafeURL(fmt.Sprintf("%s%s", detailPath, segment))
+				var templ_7745c5c3_Var8 templ.SafeURL = templ.SafeURL(fmt.Sprintf(segment))
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var8)))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

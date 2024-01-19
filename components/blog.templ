@@ -3,24 +3,17 @@ package components
 import (
   "fmt"
   "strings"
-  "time"
+
+  "github.com/masonictemple4/masonictempl/db/models"
 )
 
-templ BlogList() {
-  @Page("blog", nil, nil)
+templ BlogList(blogs []models.Blog) {
+  @Page("blog", nil) {
+    @blogListContent(blogs)
+  }
 }
 
-type Blog struct {
-  ID          string `json:"id"`
-  CreatedAt time.Time `json:"createdat"`
-  UpdatedAt time.Time `json:"updatedat"`
-  Title       string `json:"title"`
-  Description string `json:"description"`
-  Slug        string `json:"slug"`
-  Tags []string `json:"tags"`
-}
-
-templ blogListContent(blogs ...Blog) {
+templ blogListContent(blogs []models.Blog) {
      <ul class="flex flex-col items-center w-full min-w-full max-w-full">
        for _, blog := range blogs {
          @BlogCard(blog)
@@ -29,7 +22,7 @@ templ blogListContent(blogs ...Blog) {
 
 }
 
-templ BlogCard(blog Blog) {
+templ BlogCard(blog models.Blog) {
    <li class="flex items-center justify-between rounded-md border border-gray-200 py-4 pl-4 pr-5 text-sm leading-6 mb-4 w-full hover:ring hover:ring-sky-400 hover:ring-offset-emerald-600 hover:cursor-pointer hover:text-lg flex-wrap">
      <div class="flex w-0 flex-1 items-center">
        <div class="ml-4 flex flex-col min-w-0 flex-1 gap-2">
@@ -42,7 +35,7 @@ templ BlogCard(blog Blog) {
               {blog.CreatedAt.Format("2006-01-02 15:04:05")}
             </span>
             <span class="flex-wrap text-gray-400 text-right">
-              {strings.Join(blog.Tags, ", ")}
+              {tagsToString(blog.Tags)}
             </span>
         </div>
 
@@ -50,4 +43,12 @@ templ BlogCard(blog Blog) {
      </div>
    </li>
 
+}
+
+func tagsToString(tags []models.Tag) string {
+  var tagNames []string
+  for _, tag := range tags {
+    tagNames = append(tagNames, tag.Name)
+  }
+  return strings.Join(tagNames, ", ")
 }

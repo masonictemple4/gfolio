@@ -15,9 +15,9 @@ func NewSqliteDB(name string, config *gorm.Config) *gorm.DB {
 		name = fmt.Sprintf("%s.db", name)
 	}
 
-	db, err := gorm.Open(sqlite.Open(name), config)
+	db, err := gorm.Open(sqlite.Open(name))
 	if err != nil {
-		panic("newsqlitedb: failed to connect to database")
+		panic(fmt.Errorf("newsqlitedb: failed to connect to database: %w", err))
 	}
 
 	return db

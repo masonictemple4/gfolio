@@ -1,8 +1,8 @@
 package components
 
 import (
-  "fmt"
   "strings"
+  "fmt"
 )
 
 type NavLink struct {
@@ -50,43 +50,27 @@ func WithDefaultNav() []NavLink {
   }
 }
 
-const detailPath = "detail?path="
-
 templ Breadcrumbs(path string) {
 
-      <nav className="w-2/3 max-w-2/3 mx-auto">
-      <ul className="flex">
-      for index, segment := range strings.Split(path, "/") {
-        if index == len(strings.Split(path, "/")) - 1 {
+  <nav className="w-2/3 max-w-2/3 mx-auto">
+    <ul className="flex">
+      for index, segment := range strings.Split(strings.TrimPrefix(path, "/"), "/") {
+         if index == 0 {
           <li>
             <span>{segment} /</span>
           </li>
         } else {
           <li>
-            <a href={templ.SafeURL(fmt.Sprintf("%s%s", detailPath, segment))}>
+            <a href={templ.SafeURL(fmt.Sprintf(segment))}>
               <span className="text-link-blue hover:underline">{segment}</span>
             </a>
           </li>
           <li>
             <span className="mx-2">/</span>  // Delimiter
           </li>
-        }
+        } 
       }
-//      {pathSegments.map((segment, index) => (
-//        <li key={index}>
-//        {index === pathSegments.length - 1 ? (
-//          <span>{segment} /</span> 
-//        ) : (
-//          <Link href={`/${pathSegments.slice(0, index + 1).join('/')}`}>
-//          <span className="text-link-blue hover:underline">{segment}</span>
-//          </Link>
-//        )}
-//        {index !== pathSegments.length - 1 && (
-//          <span className="mx-2">/</span>  // Delimiter
-//        )}
-//        </li>
-//      ))}
-      </ul>
-      </nav>
+    </ul>
+  </nav>
 
 }

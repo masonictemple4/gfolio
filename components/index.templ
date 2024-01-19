@@ -24,5 +24,7 @@ templ defaultHomeContent() {
 
 
 templ Index() {
-  @Page("home", nil, defaultHomeContent())
+  @Page("home", nil) {
+    @defaultHomeContent()
+  }
 }

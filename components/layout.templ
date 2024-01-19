@@ -1,7 +1,7 @@
 package components
 
 
-templ Page(title string, meta map[string]string, children ...templ.Component) {
+templ Page(title string, meta map[string]string) {
   <!DOCTYPE html>
   <html>
     <head>
@@ -13,39 +13,50 @@ templ Page(title string, meta map[string]string, children ...templ.Component) {
       <script src="/assets/htmx.min.js"></script>
     </head>
     <body>
-      // TODO: Get the path from context.
-      @MainLayout(title, children...)
+      if getPathCtx(ctx) == "/" {
+        @MainLayout(title) {
+          { children... }
+        }
+      } else {
+        @BlogLayout(title, false) {
+          { children... }
+        }
+      }
     </body>
   </html>
 }
 
+func getPathCtx(ctx context.Context) string {
+  return ctx.Value("path").(string)
+}
 
-templ MainLayout(title string, children ...templ.Component) {
+
+templ MainLayout(title string) {
   <main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full min-h-full">
     @Navbar(false, nil)
-    <section class="mt-8">
+    <section class="flex-grow mt-8">
       // @PageHeader("", title)
-      for _, child := range children {
-        @child
-      }
+      { children... }
     </section>
     @Footer(WithDefaultLinks()...)
   </main>
 }
 
 
-templ BlogLayout(title string, disableBreadcrumbs bool, children ...templ.Component) {
-  <section class="container">
-    @PageHeader("", title)
-    // <PageHeader plainText={''} gradientText={title} />
-    if !disableBreadcrumbs {
-      // TODO: Breadcrumbs component
-      // <BreadCrumbs />
-      @Breadcrumbs("")
-    }
-    <div className="w-2/3 mx-auto p-6">
+templ BlogLayout(title string, disableBreadcrumbs bool) {
+  @MainLayout(title) {
+    <section class="container">
+      @PageHeader("", title)
+      // <PageHeader plainText={''} gradientText={title} />
+      if !disableBreadcrumbs {
+        // TODO: Breadcrumbs component
+        // <BreadCrumbs />
+        @Breadcrumbs(getPathCtx(ctx))
+      }
+      <div className="w-2/3 mx-auto p-6">
       {children...}
-    </div>
-  </section>
+      </div>
+    </section>
+  }
 
 }

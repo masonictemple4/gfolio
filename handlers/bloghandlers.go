@@ -1,39 +1,34 @@
 package handlers
 
 import (
-	"log"
+	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/a-h/templ"
+	"github.com/masonictemple4/masonictempl/components"
+	"github.com/masonictemple4/masonictempl/services"
 )
 
-func NewPostsHandler() PostsHandler {
-	// Replace this in-memory function with a call to a database.
-	postsGetter := func() (posts []Post, err error) {
-		return []Post{{Name: "templ", Author: "author"}}, nil
-	}
-	return PostsHandler{
-		GetPosts: postsGetter,
-		Log:      log.Default(),
+func NewBlogsHandler() BlogsHandler {
+	// Include source path to the error or calling function in the log output.
+	lgr := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
+	return BlogsHandler{
+		Log:         lgr,
+		BlogService: services.NewBlogService(),
 	}
 }
 
-type PostsHandler struct {
-	Log      *log.Logger
-	GetPosts func() ([]Post, error)
+type BlogsHandler struct {
+	Log         *slog.Logger
+	BlogService *services.BlogService
 }
 
-func (ph PostsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ps, err := ph.GetPosts()
-	if err != nil {
-		ph.Log.Printf("failed to get posts: %v", err)
-		http.Error(w, "failed to retrieve posts", http.StatusInternalServerError)
-		return
-	}
-	templ.Handler(posts(ps)).ServeHTTP(w, r)
-}
+func (ph BlogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ps := ph.BlogService.List(r.Context())
 
-type Post struct {
-	Name   string
-	Author string
+	fmt.Printf("BlogsHandler: %+v\n", ps)
+
+	templ.Handler(components.Index()).ServeHTTP(w, r)
 }

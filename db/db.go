@@ -41,6 +41,7 @@ func WithDB(gDB *gorm.DB) func(*BlogStore) {
 }
 
 func NewBlogStore(opts ...OptionsFn) (store *BlogStore, err error) {
+	store = &BlogStore{}
 	for _, o := range opts {
 		o(store)
 	}
