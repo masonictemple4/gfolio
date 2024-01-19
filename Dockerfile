@@ -10,6 +10,8 @@ ENV PORT=8080
 
 RUN go install
 
+EXPOSE 8080
+
 ENTRYPOINT ["masonictempl"]
 
 
