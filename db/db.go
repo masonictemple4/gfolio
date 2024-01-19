@@ -103,6 +103,18 @@ func (bs *BlogStore) ListBlogs(b *[]models.Blog, query map[string]any, limits ma
 	return tx.Find(b).Error
 }
 
+func (bs *BlogStore) DB() *gorm.DB {
+	return bs.db
+}
+
+func (bs *BlogStore) UpdateFromMap(tx *gorm.DB, b *models.Blog, body map[string]any, bid int) error {
+	return bs.db.Model(b).Where("id = ?", bid).Updates(body).Error
+}
+
+func (bs *BlogStore) FindByID(tx *gorm.DB, b *models.Blog, bid int) error {
+	return tx.First(b, bid).Error
+}
+
 /*
 type OptionsFunc func(*CountStore)
 

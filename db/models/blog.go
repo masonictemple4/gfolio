@@ -1,6 +1,13 @@
 package models
 
 import (
+	"errors"
+	"fmt"
+	"os"
+	"strings"
+
+	"github.com/gosimple/slug"
+	"github.com/masonictemple4/masonictempl/internal/dtos"
 	"gorm.io/gorm"
 )
 
@@ -46,7 +53,6 @@ dir := path.Join(rootPath, post.Date.Format("2006/01/02"), slug.Make(post.Title)
 		f, err := os.Create(name)
 */
 
-/*
 func (p *Blog) FromBlogInput(tx *gorm.DB, input *dtos.BlogInput) error {
 	p.Title = input.Title
 	p.Subtitle = input.Subtitle
@@ -93,16 +99,11 @@ func (p *Blog) FromBlogInput(tx *gorm.DB, input *dtos.BlogInput) error {
 	}
 
 	if p.ID == 0 {
-		return p.New(tx)
+		return tx.Create(p).Error
 	} else {
-		return p.update(tx)
+		return tx.Save(p).Error
 	}
 
-}
-
-// made private because this is dangerous.
-func (p *Blog) update(tx *gorm.DB) error {
-	return tx.Save(p).Error
 }
 
 // GenerateSlug will generate a slug for the blog.
@@ -145,7 +146,6 @@ func (p *Blog) generateBlogDir() (string, error) {
 	return fmt.Sprintf("blogs/%s", datePath), nil
 }
 
-// blogs/{id}/{created}/{slug}.md
 func (p *Blog) GenerateDocPath() (string, error) {
 
 	if p.Slug == "" {
@@ -167,8 +167,22 @@ func (p *Blog) GenerateDocPath() (string, error) {
 // Requires Bucketname
 func (p *Blog) GenerateContentUrl() string {
 	baseUrl := os.Getenv("BUCKET_BASE_URL")
+	if baseUrl == "" {
+		// With no bucket this will default to the
+		// internal static file server path.
+		return p.Docpath
+	}
 	return fmt.Sprintf("%s/%s/%s", baseUrl, p.Bucketname, p.Docpath)
 }
+
+/*
+
+// made private because this is dangerous.
+func (p *Blog) update(tx *gorm.DB) error {
+	return tx.Save(p).Error
+}
+
+
 
 func (p *Blog) FindBySlug(tx *gorm.DB, slug string, opts *repository.RepositoryOpts) error {
 	for name, opt := range opts.Preloads {
@@ -239,18 +253,20 @@ func (p *Blog) AssociationCount(tx *gorm.DB, assoc string, out repository.Associ
 	return tx.Model(p).Association(assoc).Count(), nil
 }
 
-func (p *Blog) ClearAssociations(tx *gorm.DB, assoc string) error {
-	return tx.Model(p).Association(assoc).Clear()
-}
 
 func (p *Blog) Raw(tx *gorm.DB, raw string, queryParams []any, opts *repository.RepositoryOpts) error {
 	return tx.Raw(raw, queryParams...).Find(p).Error
 }
 
+
+*/
 // TODO: Fill out this method.
 func (p *Blog) AfterDelete(tx *gorm.DB) error {
 	// Clean up Filestore
 	// Clean up Media
 	return nil
 }
-*/
+
+func (p *Blog) ClearAssociations(tx *gorm.DB, assoc string) error {
+	return tx.Model(p).Association(assoc).Clear()
+}

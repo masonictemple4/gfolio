@@ -6,6 +6,8 @@ import (
 	"encoding/binary"
 	"io"
 	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -24,31 +26,48 @@ type InternalStore struct {
 	mu   sync.Mutex
 	buf  *bufio.Writer
 	size uint64
+	root string
 }
 
-func NewInternalStore(path string) (*InternalStore, error) {
-	fi, err := os.Stat(path)
-	if err != nil {
+func NewInternalStore(root string) (*InternalStore, error) {
+	if err := os.MkdirAll(root, 0755); err != nil {
 		return nil, err
 	}
-
-	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return nil, err
-	}
-
-	size := uint64(fi.Size())
 
 	return &InternalStore{
-		File: f,
-		buf:  bufio.NewWriter(f),
-		size: size,
+		root: root,
 	}, nil
+}
+
+func (i *InternalStore) init(object string) error {
+	path := filepath.Join(i.root, object)
+	if strings.Contains(object, i.root) {
+		path = object
+	}
+
+	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+
+	fi, err := os.Stat(f.Name())
+	if err != nil {
+		return err
+	}
+
+	i.size = uint64(fi.Size())
+
+	return nil
 }
 
 func (i *InternalStore) Write(ctx context.Context, object string, p []byte) (n int64, err error) {
 	i.mu.Lock()
 	defer i.mu.Unlock()
+
+	if err := i.init(object); err != nil {
+		return 0, err
+	}
+
 	w, err := i.buf.Write(p)
 	if err != nil {
 		return 0, err
@@ -57,6 +76,8 @@ func (i *InternalStore) Write(ctx context.Context, object string, p []byte) (n i
 	// finWidth := w + lenWidth
 	i.size += uint64(w)
 
+	i.reset()
+
 	return int64(w), nil
 }
 
@@ -64,7 +85,9 @@ func (i *InternalStore) Read(ctx context.Context, path string) ([]byte, error) {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
-	if err := i.buf.Flush(); err != nil {
+	i.reset()
+
+	if err := i.init(path); err != nil {
 		return nil, err
 	}
 
@@ -87,20 +110,16 @@ func (i *InternalStore) Delete(ctx context.Context, path string) error {
 	return nil
 }
 
-func (i *InternalStore) Size(ctx context.Context, path string) (uint64, error) {
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	return i.size, nil
-}
-
-func (i *InternalStore) Close() error {
+func (i *InternalStore) reset() error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 
 	if err := i.buf.Flush(); err != nil {
 		return err
 	}
+
+	i.buf = nil
+	i.size = 0
 
 	return i.File.Close()
 }

@@ -32,24 +32,24 @@ type Media struct {
 /*
 func (m *Media) ValidAssociation(srcType any, assoc string) bool {
 
-	switch srcType.(type) {
-	case Blog:
-		if val, ok := validBlogAssociationKey[assoc]; ok && val != nil && reflect.TypeOf(m) == val {
-			return true
+		switch srcType.(type) {
+		case Blog:
+			if val, ok := validBlogAssociationKey[assoc]; ok && val != nil && reflect.TypeOf(m) == val {
+				return true
+			}
 		}
-	}
-	return false
-}
-
-func (m *Media) All(tx *gorm.DB, opts *repository.RepositoryOpts, out any) error {
-	if opts != nil {
-		for name, opt := range opts.Preloads {
-			tx = tx.Preload(name, opt)
-		}
+		return false
 	}
 
-	return tx.Find(out).Error
-}
+	func (m *Media) All(tx *gorm.DB, opts *repository.RepositoryOpts, out any) error {
+		if opts != nil {
+			for name, opt := range opts.Preloads {
+				tx = tx.Preload(name, opt)
+			}
+		}
+
+		return tx.Find(out).Error
+	}
 
 // BEWARE!!! This method calls the method to make
 // an update from the object istelf while we have
@@ -58,17 +58,19 @@ func (m *Media) All(tx *gorm.DB, opts *repository.RepositoryOpts, out any) error
 // Update from the map is the recommended
 // choice. However, if you understand the risks here
 // I have decided to expose the UnsafeUpdate method
-func (m *Media) UnsafeUpdate(tx *gorm.DB) error {
-	return m.update(tx)
-}
+
+	func (m *Media) UnsafeUpdate(tx *gorm.DB) error {
+		return m.update(tx)
+	}
 
 // WARNING!!! Because this uses the pointer to the object it could
 // potentially cause weird behavior if something else is using that
 // pointer and it changes etc..
-func (m *Media) update(tx *gorm.DB) error {
-	return tx.Save(m).Error
-}
 
+	func (m *Media) update(tx *gorm.DB) error {
+		return tx.Save(m).Error
+	}
+*/
 func MediaFromStrings(tx *gorm.DB, input []string, out *[]Media) error {
 	for _, url := range input {
 		var media Media
@@ -80,4 +82,3 @@ func MediaFromStrings(tx *gorm.DB, input []string, out *[]Media) error {
 	}
 	return nil
 }
-*/

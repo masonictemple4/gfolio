@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -10,7 +11,9 @@ import (
 
 	"github.com/masonictemple4/masonictempl/db/models"
 	"github.com/masonictemple4/masonictempl/internal/dtos"
+	"github.com/masonictemple4/masonictempl/internal/filestore"
 	"github.com/masonictemple4/masonictempl/internal/parser"
+	"github.com/masonictemple4/masonictempl/services"
 )
 
 var blogsCmd = &cobra.Command{
@@ -35,20 +38,32 @@ masonictempl blog create <file path>`,
 			return
 		}
 
+		localstore, err := cmd.Flags().GetString("localstore")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		createBlog(cmd.Context(), args[0], localstore, cmd.Flags())
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(blogsCmd)
+	blogsCmd.AddCommand(blogCreateCmd)
+	blogsCmd.PersistentFlags().String("localstore", "./assets/blogs", "path to internal store. This is just the root dir where blogs will be stored.")
 }
 
-func createBlog(ctx context.Context, path string, flags *pflag.FlagSet) error {
+func createBlog(ctx context.Context, path, localstore string, flags *pflag.FlagSet) error {
 	// What if instead of passing a path to parser here and eventually would have to be
 	// the filestore too if i read file here and pass bytes to the parsr and writer.
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
+
+	localService := services.NewBlogService()
+	blogDb := localService.Store.DB()
 
 	var result dtos.BlogInput
 	err = parser.ParseFile(path, &result)
@@ -59,11 +74,10 @@ func createBlog(ctx context.Context, path string, flags *pflag.FlagSet) error {
 	fmt.Printf("\nThe parsed result is:  %+v\n", result)
 
 	post := &models.Blog{
-		Bucketname: os.Getenv("STORAGE_BUCKET"),
-		State:      models.BlogStateDraft,
+		State: models.BlogStateDraft,
 	}
 
-	err = post.FromBlogInput(DB, &result)
+	err = post.FromBlogInput(blogDb, &result)
 	if err != nil {
 		return err
 	}
@@ -71,7 +85,10 @@ func createBlog(ctx context.Context, path string, flags *pflag.FlagSet) error {
 	// generate a slug because now we have a title.
 	post.Slug = post.GenerateSlug("")
 
-	fileHandler := filestore.NewGCPStore(false, 0)
+	fileHandler, err := filestore.NewInternalStore(localstore)
+	if err != nil {
+		return err
+	}
 
 	post.Docpath, err = post.GenerateDocPath()
 	if err != nil {
@@ -84,7 +101,7 @@ func createBlog(ctx context.Context, path string, flags *pflag.FlagSet) error {
 	}
 
 	updateBody := map[string]any{"contenturl": post.GenerateContentUrl(), "docpath": post.Docpath, "state": models.BlogStatePublished, "slug": post.Slug}
-	err = post.Update(DB, int(post.ID), updateBody)
+	err = localService.Store.UpdateFromMap(blogDb, post, updateBody, int(post.ID))
 	if err != nil {
 		return err
 	}
@@ -93,9 +110,12 @@ func createBlog(ctx context.Context, path string, flags *pflag.FlagSet) error {
 }
 
 func updateBlog(ctx context.Context, bid int, path string) error {
-	var blog models.Blog
 
-	err := blog.FindByID(DB, bid, nil)
+	localService := services.NewBlogService()
+	blogDb := localService.Store.DB()
+
+	var blog models.Blog
+	err := localService.Store.FindByID(blogDb, &blog, bid)
 	if err != nil {
 		return err
 	}
@@ -113,7 +133,7 @@ func updateBlog(ctx context.Context, bid int, path string) error {
 
 	fmt.Printf("\nThe parsed result is:  %+v\n", result)
 
-	err = blog.FromBlogInput(DB, &result)
+	err = blog.FromBlogInput(blogDb, &result)
 	if err != nil {
 		return err
 	}
@@ -141,7 +161,7 @@ func updateBlog(ctx context.Context, bid int, path string) error {
 		"state":      models.BlogStatePublished,
 		"slug":       blog.Slug,
 	}
-	err = blog.Update(DB, int(blog.ID), updateBody)
+	err = localService.Store.UpdateFromMap(blogDb, &blog, updateBody, int(blog.ID))
 	if err != nil {
 		return err
 	}

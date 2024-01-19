@@ -1,6 +1,8 @@
 package models
 
 import (
+	"github.com/masonictemple4/masonictempl/internal/dtos"
+	"github.com/masonictemple4/masonictempl/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -14,6 +16,22 @@ type User struct {
 	Email          string `gorm:"column:email;uniqueIndex;" json:"email"`
 	ProfilePicture string `gorm:"column:profilepicture;" json:"profilepicture"`
 	Logintype      string `gorm:"column:logintype;" json:"logintype"`
+}
+
+func AuthorFromInput(tx *gorm.DB, input []dtos.BlogAuthorInput, out *[]User) error {
+	var authors []User
+	if err := utils.Convert(input, &authors); err != nil {
+		return nil
+	}
+	for _, author := range authors {
+		var user User
+		err := tx.FirstOrCreate(&user, User{Username: author.Username, ProfilePicture: author.ProfilePicture}).Error
+		if err != nil {
+			return err
+		}
+		*out = append(*out, user)
+	}
+	return nil
 }
 
 /*
@@ -63,21 +81,6 @@ func (u *User) ValidAssociation(srcType any, assoc string) bool {
 	return false
 }
 
-func AuthorFromInput(tx *gorm.DB, input []dtos.BlogAuthorInput, out *[]User) error {
-	var authors []User
-	if err := utils.Convert(input, &authors); err != nil {
-		return nil
-	}
-	for _, author := range authors {
-		var user User
-		err := tx.FirstOrCreate(&user, User{Username: author.Username, ProfilePicture: author.ProfilePicture}).Error
-		if err != nil {
-			return err
-		}
-		*out = append(*out, user)
-	}
-	return nil
-}
 
 func (u *User) GenerateProfilePicturePath(ext string) string {
 	switch ext {
