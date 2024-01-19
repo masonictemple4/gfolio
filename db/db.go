@@ -74,7 +74,7 @@ func (bs *BlogStore) migrate() error {
 	)
 }
 
-func (bs *BlogStore) ListBlogs(b *[]models.Blog, query map[string]any, limits map[string]int, preloads ...string) error {
+func (bs *BlogStore) ListBlogs(b *[]models.Blog, query map[string]any, limits map[string]int, order string, preloads ...string) error {
 	tx := bs.db.Model(b)
 
 	if len(preloads) > 0 {
@@ -98,6 +98,10 @@ func (bs *BlogStore) ListBlogs(b *[]models.Blog, query map[string]any, limits ma
 		for k, v := range query {
 			tx = tx.Where(k, v)
 		}
+	}
+
+	if order != "" {
+		tx.Order(order)
 	}
 
 	return tx.Find(b).Error

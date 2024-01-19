@@ -38,12 +38,12 @@ masonictempl blog create <file path>`,
 			return
 		}
 
-		localstore, err := cmd.Flags().GetString("localstore")
+		pubDir, err := cmd.Flags().GetString("pub")
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		if err := createBlog(cmd.Context(), args[0], localstore, cmd.Flags()); err != nil {
+		if err := createBlog(cmd.Context(), args[0], pubDir, cmd.Flags()); err != nil {
 			log.Fatal(err)
 		}
 
@@ -53,10 +53,10 @@ masonictempl blog create <file path>`,
 func init() {
 	rootCmd.AddCommand(blogsCmd)
 	blogsCmd.AddCommand(blogCreateCmd)
-	blogsCmd.PersistentFlags().String("localstore", "./assets/blogs", "path to internal store. This is just the root dir where blogs will be stored.")
+	blogsCmd.PersistentFlags().String("pub", os.Getenv("ASSET_DIR"), "name of your public/static file directory.")
 }
 
-func createBlog(ctx context.Context, path, localstore string, flags *pflag.FlagSet) error {
+func createBlog(ctx context.Context, path, pubRoot string, flags *pflag.FlagSet) error {
 	// What if instead of passing a path to parser here and eventually would have to be
 	// the filestore too if i read file here and pass bytes to the parsr and writer.
 	data, err := os.ReadFile(path)
@@ -87,7 +87,7 @@ func createBlog(ctx context.Context, path, localstore string, flags *pflag.FlagS
 	// generate a slug because now we have a title.
 	post.Slug = post.GenerateSlug("")
 
-	fileHandler, err := filestore.NewInternalStore(localstore)
+	fileHandler, err := filestore.NewInternalStore(pubRoot)
 	if err != nil {
 		return err
 	}
