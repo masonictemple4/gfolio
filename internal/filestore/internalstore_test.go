@@ -10,7 +10,7 @@ const curPath = "internal/filestore"
 
 func TestPathing(t *testing.T) {
 	t.Run("[Internal store] Freehand path expiriments", func(t *testing.T) {
-		workingDir := os.Getenv("PWD")
+		workingDir := os.Getenv("WORKDIR")
 
 		t.Logf("Working dir Pre-Correction: %s", workingDir)
 		workingDir = strings.TrimSuffix(workingDir, curPath)

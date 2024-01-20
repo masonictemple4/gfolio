@@ -52,7 +52,7 @@ func NewInternalStore(assetRoot string) (*InternalStore, error) {
 		}
 	}
 
-	wd := os.Getenv("PWD")
+	wd := os.Getenv("WORKDIR")
 
 	if !strings.Contains(wd, assetRoot) {
 		if strings.HasSuffix(wd, "/") {
@@ -73,7 +73,7 @@ func NewInternalStore(assetRoot string) (*InternalStore, error) {
 
 func (i *InternalStore) init(path string, flag int) error {
 
-	path = filepath.Join(os.Getenv("PWD"), path)
+	path = filepath.Join(os.Getenv("WORKDIR"), path)
 
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err

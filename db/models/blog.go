@@ -192,7 +192,7 @@ func (p *Blog) generateBlogDir() (string, error) {
 // interacting directly with the file.
 func (p *Blog) GenerateDocPath(assetRoot string) (string, error) {
 
-	pwd := os.Getenv("PWD")
+	pwd := os.Getenv("WORKDIR")
 
 	if strings.Contains(assetRoot, pwd) {
 		assetRoot = strings.Replace(assetRoot, pwd, "", 1)
@@ -224,7 +224,7 @@ func (p *Blog) GenerateContentUrl() string {
 	if baseUrl == "" {
 		// With no bucket this will default to the
 		// internal static file server path.
-		wd := os.Getenv("PWD")
+		wd := os.Getenv("WORKDIR")
 		return strings.Replace(p.Docpath, wd, "", 1)
 	}
 

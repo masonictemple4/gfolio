@@ -76,7 +76,7 @@ func Execute() {
 
 func startServer() {
 	if *staticPtr == "" {
-		pwd := os.Getenv("PWD")
+		pwd := os.Getenv("WORKDIR")
 		if !confirmationLoop(pwd) {
 			println("Exiting...")
 			os.Exit(0)
