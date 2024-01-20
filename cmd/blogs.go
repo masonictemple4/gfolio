@@ -54,6 +54,7 @@ masonictempl blog create <file path>`,
 func init() {
 	rootCmd.AddCommand(blogsCmd)
 	blogsCmd.AddCommand(blogCreateCmd)
+	blogsCmd.AddCommand(blogsListCmd)
 	blogsCmd.PersistentFlags().String("pub", os.Getenv("ASSET_DIR"), "name of your public/static file directory.")
 }
 
