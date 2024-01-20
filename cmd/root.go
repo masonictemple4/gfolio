@@ -36,7 +36,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		if wrkDir == "" && os.Getenv("WORKDIR") == "" {
-			log.Fatal("WORKDIR environment setting is required")
+			log.Fatal("BOTH Flag and Env setting were empty WORKDIR environment setting is required")
 		}
 
 		if wrkDir != "" {
