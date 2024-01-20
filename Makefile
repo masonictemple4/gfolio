@@ -3,8 +3,8 @@ COMPONENT_DIR=components
 IN_CSS=$(ASSET_DIR)/input.css
 OUT_CSS=$(ASSET_DIR)/main.css
 PROXY="http://localhost:8080"
-CMD="go run ."
 BINARY_NAME=masonictempl
+WORKDIR ?= $(shell pwd)
 
 # This can be passed at the command line when running make
 # like so: `BIN_DIR=/your/path/here make`
@@ -14,7 +14,7 @@ BINARY_NAME=masonictempl
 BIN_DIR ?= $(shell go env GOPRIVATE)
 
 ifeq ($(BIN_DIR),) 
-	BIN_DIR = bin/
+	BIN_DIR = bin
 endif
 
 PORT ?= $(or $(shell echo $$PORT),8080)
@@ -30,12 +30,8 @@ templates:
 	templ generate $(COMPONENT_DIR)
 
 run: build
-	./$(BIN_DIR)/$(BINARY_NAME) --port $(PORT)
+	./$(BIN_DIR)/$(BINARY_NAME) --port $(PORT) --workdir $(WORKDIR)
 
-.PHONY: run-watch
-run-watch:
-	# templ generate --watch --proxy="http://localhost:8080" --cmd="go run ."
-	templ generate --watch --proxy=$(PROXY) --cmd=$(CMD)
 
 .PHONY: clean
 clean: 
@@ -49,7 +45,7 @@ hot-reload:
 
 .PHONY: runserver
 runserver:
-	go run . --port $(PORT)
+	go run . --port $(PORT) --workdir $(WORKDIR)
 
 .PHONY: kill
 kill:
@@ -63,3 +59,4 @@ kill:
 .PHONY: build
 build:
 	mkdir -p $(BIN_DIR) && go build -o $(BIN_DIR)/$(BINARY_NAME)
+

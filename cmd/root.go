@@ -30,6 +30,22 @@ var rootCmd = &cobra.Command{
 		// TODO: Here we can add config loading
 		// And db setup if necessary..
 		// This can be done later....
+		wrkDir, err := cmd.PersistentFlags().GetString("workdir")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if wrkDir == "" && os.Getenv("WORKDIR") == "" {
+			log.Fatal("WORKDIR environment setting is required")
+		}
+
+		if wrkDir != "" {
+			os.Setenv("WORKDIR", wrkDir)
+		}
+
+		if os.Getenv("WORKDIR") == "" {
+			log.Fatal("WORKDIR environment setting is required")
+		}
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -48,6 +64,8 @@ func init() {
 	hostPtr = rootCmd.Flags().String("host", "", "host to serve on")
 	portPtr = rootCmd.Flags().String("port", os.Getenv("PORT"), "port to serve on. defaults to the PORT env variable.")
 	staticPtr = rootCmd.Flags().String("static", "assets", "path to static files directory.")
+	rootCmd.PersistentFlags().String("workdir", os.Getenv("WORKDIR"), "REQUIRED. This will ensure you don't have problems with path generation and saving later on. Ideally this is the root of your project but as long as it's the same throughout it doesn't really matter what it is.")
+	rootCmd.MarkPersistentFlagRequired("workdir")
 }
 
 func Execute() {
