@@ -3,7 +3,9 @@ package models
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/gosimple/slug"
@@ -27,19 +29,23 @@ func ValidBlogState(state string) bool {
 
 type Blog struct {
 	gorm.Model
-	Title       string    `gorm:"column:title;" json:"title"`
-	Subtitle    string    `gorm:"column:subtitle;" json:"subtitle"`
-	Description string    `gorm:"column:description;" json:"description"`
-	Thumbnail   string    `gorm:"column:thumbnail;" json:"thumbnail"`
-	ContentUrl  string    `gorm:"column:contenturl;" json:"contenturl"`
-	Docpath     string    `gorm:"column:docpath;" json:"docpath"`
-	Bucketname  string    `gorm:"column:bucketname;" json:"bucketname"`
-	State       string    `gorm:"column:state;" json:"state"`
-	Slug        string    `gorm:"column:slug;" json:"slug"`
-	Tags        []Tag     `gorm:"many2many:blog_tags;" json:"tags"`
-	Media       []Media   `gorm:"many2many:blog_media;" json:"media"`
-	Authors     []User    `gorm:"many2many:blog_authors;" json:"authors"`
-	Comments    []Comment `json:"comments"`
+	Title       string `gorm:"column:title;" json:"title"`
+	Subtitle    string `gorm:"column:subtitle;" json:"subtitle"`
+	Description string `gorm:"column:description;" json:"description"`
+	Thumbnail   string `gorm:"column:thumbnail;" json:"thumbnail"`
+	ContentUrl  string `gorm:"column:contenturl;" json:"contenturl"`
+	// Docpath should be the /asset_dir/blog_root/path-schema
+	// will join the filestore root with this path when opening
+	// local files. Thus eliminating our issues with storing
+	// paths in db that may be shared on multiple devices.
+	Docpath    string    `gorm:"column:docpath;" json:"docpath"`
+	Bucketname string    `gorm:"column:bucketname;" json:"bucketname"`
+	State      string    `gorm:"column:state;" json:"state"`
+	Slug       string    `gorm:"column:slug;" json:"slug"`
+	Tags       []Tag     `gorm:"many2many:blog_tags;" json:"tags"`
+	Media      []Media   `gorm:"many2many:blog_media;" json:"media"`
+	Authors    []User    `gorm:"many2many:blog_authors;" json:"authors"`
+	Comments   []Comment `json:"comments"`
 }
 
 /*
@@ -140,8 +146,23 @@ func (p *Blog) GenerateSlug(input string) string {
 		return input
 	}
 
-	newSlug := slug.Make(p.Title)
+	// is title a single word?
+	// if so use that as the slug.
+	// for some reason slug.Make was returning
+	// an empty string.
+	pattern := `^\S+$`
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		log.Printf("Error compiling regex: %v", err)
+		return ""
+	}
+	println("The title we're checking: ", p.Title)
 
+	if r.MatchString(p.Title) {
+		return strings.ToLower(p.Title)
+	}
+
+	newSlug := slug.Make(p.Title)
 	return newSlug
 }
 
@@ -170,6 +191,12 @@ func (p *Blog) generateBlogDir() (string, error) {
 // This is the location on the filesystem. Use this when
 // interacting directly with the file.
 func (p *Blog) GenerateDocPath(assetRoot string) (string, error) {
+
+	pwd := os.Getenv("PWD")
+
+	if strings.Contains(assetRoot, pwd) {
+		assetRoot = strings.Replace(assetRoot, pwd, "", 1)
+	}
 
 	if p.Slug == "" {
 		if slug := p.GenerateSlug(""); slug == "" {

@@ -4,6 +4,21 @@ IN_CSS=$(ASSET_DIR)/input.css
 OUT_CSS=$(ASSET_DIR)/main.css
 PROXY="http://localhost:8080"
 CMD="go run ."
+BINARY_NAME=masonictempl
+
+# This can be passed at the command line when running make
+# like so: `BIN_DIR=/your/path/here make`
+# If this value is not specified it will default to your GOBIN
+# setting, and if that is empty it will default to a local `bin/`
+# directory.
+BIN_DIR ?= $(shell go env GOPRIVATE)
+
+ifeq ($(BIN_DIR),) 
+	BIN_DIR = bin/
+endif
+
+PORT ?= $(or $(shell echo $$PORT),8080)
+
 
 all: css templates run 
 
@@ -14,8 +29,8 @@ css:
 templates: 
 	templ generate $(COMPONENT_DIR)
 
-run:
-	go run *.go
+run: build
+	./$(BIN_DIR)/$(BINARY_NAME) --port $(PORT)
 
 .PHONY: run-watch
 run-watch:
@@ -34,9 +49,17 @@ hot-reload:
 
 .PHONY: runserver
 runserver:
-	go run .
+	go run . --port $(PORT)
 
 .PHONY: kill
 kill:
 		-kill $(shell jobs -p 2>/dev/null) || true
 
+# Build will create the BIN_DIR first if it does not exist
+# Then create a binary inside of the destination.
+# IMPORTANT: Could potentially require root or admin privileges
+# depending on the path. It's best to install somewhere
+# with user permissions.
+.PHONY: build
+build:
+	mkdir -p $(BIN_DIR) && go build -o $(BIN_DIR)/$(BINARY_NAME)

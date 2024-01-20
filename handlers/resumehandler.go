@@ -37,7 +37,6 @@ func (rh ResumeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	fp := os.Getenv("RESUME_MD_PATH")
 
 	if len(strings.Split(strings.TrimPrefix(r.URL.Path, "/"), "/")) > 1 && strings.Contains(r.URL.Path, "download") {
-		println("SHOULD BE DOWNLOADING")
 		if fp == "" {
 			// "assets/resume.pdf"
 			fp = filepath.Join(filestore.GetRootPath(rh.FileHandler), "resume.pdf")

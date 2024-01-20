@@ -1,3 +1,8 @@
+---
+title: test
+authors:
+    - username: "masonictemple4"
+---
 # Testing note
 asdfasdfakjsdf;klajsdf;kjasdfjjjjjkjkjasdfasdfakjsdf;klajsdf;kjasdfj jjjjkjkjasdfasdfakjsdf;klajsdf;kjasdfjjjjjkjkjasdfasdfakjsdf;klajsdf
 ;kjasdfjjjjjkjkjasdfasdfakjsdf;klajsdf;kjasdfjjjjjkjkjasdfasdfakjsdf;klajsdf;kjasdfjjjjjkjk

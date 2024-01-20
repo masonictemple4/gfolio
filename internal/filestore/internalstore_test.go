@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-const curPath = "internal/filestore/"
+const curPath = "internal/filestore"
 
 func TestPathing(t *testing.T) {
 	t.Run("[Internal store] Freehand path expiriments", func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestPathing(t *testing.T) {
 		// Remember to replace the curPath because we're running inside
 		// the package directory.
 		t.Logf("Store root Raw: %s", store.root)
-		t.Logf("Store root: %s", strings.Replace(store.root, curPath, "", 1))
+		t.Logf("Store root: %s", strings.Replace(store.root, curPath+"/", "", 1))
 
 	})
 
