@@ -24,6 +24,7 @@ You canuse this command to list, create, update, and delete blogs.
 The default will be to list all blogs.
 masonictempl blogs [command]`,
 	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
 	},
 }
 

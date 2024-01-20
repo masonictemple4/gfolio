@@ -197,7 +197,7 @@ func (p *Blog) GenerateContentUrl() string {
 	if baseUrl == "" {
 		// With no bucket this will default to the
 		// internal static file server path.
-		wd, _ := os.Getwd()
+		wd := os.Getenv("PWD")
 		return strings.Replace(p.Docpath, wd, "", 1)
 	}
 

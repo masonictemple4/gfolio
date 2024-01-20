@@ -58,11 +58,7 @@ func Execute() {
 
 func startServer() {
 	if *staticPtr == "" {
-		pwd, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-		}
-
+		pwd := os.Getenv("PWD")
 		if !confirmationLoop(pwd) {
 			println("Exiting...")
 			os.Exit(0)

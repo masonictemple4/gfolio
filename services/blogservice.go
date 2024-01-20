@@ -12,7 +12,7 @@ type BlogService struct {
 }
 
 func NewBlogService() *BlogService {
-	sDB := db.NewSqliteDB("blog.db", nil)
+	sDB := db.NewSqliteDB("./blog.db", nil)
 	store, err := db.NewBlogStore(db.WithDB(sDB))
 	if err != nil {
 		panic(err)

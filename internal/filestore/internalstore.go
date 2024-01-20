@@ -52,10 +52,7 @@ func NewInternalStore(assetRoot string) (*InternalStore, error) {
 		}
 	}
 
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
+	wd := os.Getenv("PWD")
 
 	if !strings.Contains(wd, assetRoot) {
 		if strings.HasSuffix(wd, "/") {
