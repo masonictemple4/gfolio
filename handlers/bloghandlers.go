@@ -46,7 +46,6 @@ func (bh BlogsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		fp := strings.Replace(blog.Docpath, "./", "", 1)
 		blogData, err := bh.Filehandler.Read(r.Context(), fp)
-		// blogData, err := os.ReadFile()
 		if err != nil {
 			fmt.Printf("Error reading blog: %v\n", err)
 		}
