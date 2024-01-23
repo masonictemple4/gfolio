@@ -21,6 +21,6 @@ ENV PORT=8080
 # Should be set by default on the target machine, but just incase.
 EXPOSE 8080
 
-CMD ["./bin/masonictempl"]
+ENTRYPOINT ["./bin/masonictempl"]
 
 
