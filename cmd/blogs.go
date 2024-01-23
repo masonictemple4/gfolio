@@ -39,7 +39,7 @@ masonictempl blog create <file path>`,
 			return
 		}
 
-		pubDir, err := cmd.Flags().GetString("pub")
+		pubDir, err := cmd.PersistentFlags().GetString("pub")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,7 +55,6 @@ func init() {
 	rootCmd.AddCommand(blogsCmd)
 	blogsCmd.AddCommand(blogCreateCmd)
 	blogsCmd.AddCommand(blogsListCmd)
-	blogsCmd.PersistentFlags().String("pub", os.Getenv("ASSET_DIR"), "name of your public/static file directory.")
 }
 
 func createBlog(ctx context.Context, path, pubRoot string, flags *pflag.FlagSet) error {

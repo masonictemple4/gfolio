@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"encoding/binary"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -37,20 +38,10 @@ type InternalStore struct {
 // Note: Passing a value here overrides env ASSET_DIR
 // and if that is not set either, we default to "assets".
 //
-// "/" is not an eligible path for internal/local storage.
-// However, this can be used in remote storages as the root.
-//
 // You can leave assetRoot empty or fill it with os.Getenv("ASSET_DIR")
 // when implenting. That or replace it with the directory name for your
 // public files..
 func NewInternalStore(assetRoot string) (*InternalStore, error) {
-	if assetRoot == "" {
-		if val := os.Getenv("ASSET_DIR"); val != "" && val != "/" {
-			assetRoot = val
-		} else {
-			assetRoot = "assets"
-		}
-	}
 
 	wd := os.Getenv("WORKDIR")
 
@@ -61,6 +52,8 @@ func NewInternalStore(assetRoot string) (*InternalStore, error) {
 			assetRoot = wd + "/" + strings.TrimPrefix(assetRoot, "/")
 		}
 	}
+
+	fmt.Println("assetRoot:", assetRoot)
 
 	if err := os.MkdirAll(assetRoot, 0755); err != nil {
 		return nil, err

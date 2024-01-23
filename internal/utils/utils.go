@@ -1,6 +1,9 @@
 package utils
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"os"
+)
 
 func Convert[S any, T any](source S, target T) error {
 	tmp, err := json.Marshal(source)
@@ -12,4 +15,9 @@ func Convert[S any, T any](source S, target T) error {
 		return err
 	}
 	return nil
+}
+
+func FileExists(fn string) bool {
+	fInfo, err := os.Stat(fn)
+	return !os.IsNotExist(err) && !fInfo.IsDir()
 }

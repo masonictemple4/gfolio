@@ -12,6 +12,12 @@ ENV WORKDIR=/usr/src/masonictempl
 # Note: Make sure you have the certs and creds folders in a local env folder
 COPY . .
 
+# It does not like that leading `.` so copy it
+# manually, this works.
+COPY env/.masonictempl.prod.env /etc/env/.masonictempl.env
+
+RUN mv env/* /etc/env/.
+
 RUN go mod download
 
 RUN make build

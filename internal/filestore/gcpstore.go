@@ -22,12 +22,18 @@ type GCPStore struct {
 	root            string
 }
 
-// TODO: Actually set root
-func NewGCPStore(progress bool, chunk int64) *GCPStore {
+// NewGCPStore creates a new gcp store and returns a pointer to it.
+//
+// Note: Passing a value here overrides env ASSET_DIR
+//
+// You can leave assetRoot empty or fill it with os.Getenv("ASSET_DIR")
+// when implenting. That or replace it with the directory name for your
+// public files..
+func NewGCPStore(assetRoot string, progress bool, chunk int64) *GCPStore {
 	return &GCPStore{
 		ProgressEnabled: progress,
 		ChunkSize:       chunk,
-		root:            "/",
+		root:            assetRoot,
 	}
 }
 
@@ -51,7 +57,13 @@ func (g *GCPStore) Read(ctx context.Context, path string) ([]byte, error) {
 	// TODO: Find filename
 	buf := new(bytes.Buffer)
 
-	objPath := strings.Trim(baseurl, path)
+	path = removeLocalPath(path, os.Getenv("WORKDIR"))
+
+	println("baseurl: ", baseurl)
+	objPath := strings.TrimPrefix(path, baseurl)
+	println("bucket: ", bucket)
+	println("objPath: ", objPath)
+
 	gcpRdr, err := client.Bucket(bucket).Object(objPath).NewReader(ctx)
 	if err != nil {
 		return nil, err
@@ -66,6 +78,7 @@ func (g *GCPStore) Read(ctx context.Context, path string) ([]byte, error) {
 
 // Path corresponds to the path inside of storage bucket.
 func (g *GCPStore) Write(ctx context.Context, object string, p []byte) (n int64, err error) {
+	object = removeLocalPath(object, os.Getenv("WORKDIR"))
 	bucket := os.Getenv("STORAGE_BUCKET")
 
 	client, err := storage.NewClient(ctx)
@@ -104,5 +117,16 @@ func (g *GCPStore) Write(ctx context.Context, object string, p []byte) (n int64,
 
 func (g *GCPStore) Delete(ctx context.Context, path string) error {
 	// TODO Fill this out.
+	// path = removeLocalPath(path, os.Getenv("WORKDIR"))
 	return nil
+}
+
+func removeLocalPath(s, prefix string) string {
+	if strings.Contains(s, prefix) {
+		s = strings.TrimPrefix(s, prefix)
+		if strings.HasPrefix(s, "/") {
+			s = strings.TrimPrefix(s, "/")
+		}
+	}
+	return s
 }
