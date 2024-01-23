@@ -96,7 +96,7 @@ var rootCmd = &cobra.Command{
 			return
 		}
 
-		// startServer()
+		startServer()
 
 	},
 }
