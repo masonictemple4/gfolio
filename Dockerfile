@@ -18,7 +18,6 @@ COPY env/.masonictempl.prod.env /etc/env/.masonictempl.env
 
 RUN mv env/* /etc/env/.
 
-
 RUN go mod download
 
 RUN make build 
