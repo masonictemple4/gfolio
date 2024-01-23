@@ -130,7 +130,8 @@ func startServer() {
 		hostStr = fmt.Sprintf("%s:%s", *hostPtr, *portPtr)
 	}
 
-	blogDb := db.NewPostgresGCPProxy(db.WithDSN())
+	blogDb := db.NewPostgresGCPProxy()
+
 	blogService := services.NewBlogService(blogDb)
 
 	hndlr := handlers.NewDefaultHandler()

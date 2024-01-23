@@ -14,6 +14,10 @@ type BlogService struct {
 
 func NewBlogService(d *gorm.DB) *BlogService {
 
+	if d == nil {
+		panic("NewBlogService requires a gorm.DB")
+	}
+
 	store, err := db.NewBlogStore(db.WithDB(d))
 	if err != nil {
 		panic(err)

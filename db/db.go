@@ -66,11 +66,11 @@ func (bs *BlogStore) Close() error {
 
 func (bs *BlogStore) migrate() error {
 	return bs.db.AutoMigrate(
+		&models.Blog{},
 		&models.Tag{},
 		&models.Media{},
 		&models.User{},
 		&models.Comment{},
-		&models.Blog{},
 	)
 }
 

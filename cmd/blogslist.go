@@ -19,7 +19,7 @@ var blogsListCmd = &cobra.Command{
 }
 
 func listBlogs(ctx context.Context) {
-	bDb := db.NewPostgresGCPProxy(db.WithDSN())
+	bDb := db.NewPostgresGCPProxy()
 
 	bServ := services.NewBlogService(bDb)
 	blogs := bServ.List(ctx)

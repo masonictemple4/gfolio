@@ -50,7 +50,7 @@ func createBlog(ctx context.Context, path, pubRoot string, flags *pflag.FlagSet)
 		return err
 	}
 
-	blogDb := db.NewPostgresGCPProxy(db.WithDSN())
+	blogDb := db.NewPostgresGCPProxy()
 	localService := services.NewBlogService(blogDb)
 
 	var result dtos.BlogInput
