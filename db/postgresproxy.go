@@ -70,10 +70,10 @@ func NewPostgresGCPProxy(opts ...PgOptionsFn) *gorm.DB {
 
 func connectWithConnector() (*sql.DB, error) {
 	var (
-		dbUser                 = promiseEnv("DB_USER")                  // e.g. 'my-db-user'
-		dbPwd                  = promiseEnv("DB_PASS")                  // e.g. 'my-db-password'
-		dbName                 = promiseEnv("DB_NAME")                  // e.g. 'my-database'
-		instanceConnectionName = promiseEnv("INSTANCE_CONNECTION_NAME") // e.g. 'project:region:instance'
+		dbUser                 = promiseEnv("DB_USER")
+		dbPwd                  = promiseEnv("DB_PASS")
+		dbName                 = promiseEnv("DB_NAME")
+		instanceConnectionName = promiseEnv("INSTANCE_CONNECTION_NAME")
 		usePrivate             = os.Getenv("PRIVATE_IP")
 	)
 
