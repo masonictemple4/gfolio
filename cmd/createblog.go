@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/masonictemple4/masonictempl/db"
 	"github.com/masonictemple4/masonictempl/db/models"
 	"github.com/masonictemple4/masonictempl/internal/dtos"
 	"github.com/masonictemple4/masonictempl/internal/filestore"
@@ -49,8 +50,8 @@ func createBlog(ctx context.Context, path, pubRoot string, flags *pflag.FlagSet)
 		return err
 	}
 
-	localService := services.NewBlogService()
-	blogDb := localService.Store.DB()
+	blogDb := db.NewPostgresGCPProxy(db.WithDSN())
+	localService := services.NewBlogService(blogDb)
 
 	var result dtos.BlogInput
 	err = parser.ParseFile(path, &result)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/masonictemple4/masonictempl/db"
 	"github.com/masonictemple4/masonictempl/services"
 	"github.com/spf13/cobra"
 )
@@ -17,11 +18,10 @@ var blogsListCmd = &cobra.Command{
 	},
 }
 
-func intit() {
-}
-
 func listBlogs(ctx context.Context) {
-	bServ := services.NewBlogService()
+	bDb := db.NewPostgresGCPProxy(db.WithDSN())
+
+	bServ := services.NewBlogService(bDb)
 	blogs := bServ.List(ctx)
 
 	if len(blogs) == 0 {

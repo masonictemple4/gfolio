@@ -12,9 +12,11 @@ import (
 	"github.com/a-h/templ"
 	"github.com/joho/godotenv"
 	"github.com/masonictemple4/masonictempl/components"
+	"github.com/masonictemple4/masonictempl/db"
 	"github.com/masonictemple4/masonictempl/handlers"
 	"github.com/masonictemple4/masonictempl/internal/filestore"
 	"github.com/masonictemple4/masonictempl/internal/utils"
+	"github.com/masonictemple4/masonictempl/services"
 	"github.com/spf13/cobra"
 )
 
@@ -128,8 +130,9 @@ func startServer() {
 		hostStr = fmt.Sprintf("%s:%s", *hostPtr, *portPtr)
 	}
 
-	// TODO: Might make more sense to define it with some DI
-	// Like first specifying the store, then the service, then the handler.
+	blogDb := db.NewPostgresGCPProxy(db.WithDSN())
+	blogService := services.NewBlogService(blogDb)
+
 	hndlr := handlers.NewDefaultHandler()
 	hndlr.AssetPath = *staticPtr
 
@@ -138,7 +141,7 @@ func startServer() {
 		log.Fatal(err)
 	}
 
-	blogHandler := handlers.NewBlogsHandler(fh)
+	blogHandler := handlers.NewBlogsHandler(blogService, fh)
 
 	resumeHandler := handlers.NewResumeHandler(fh)
 

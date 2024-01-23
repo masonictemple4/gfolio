@@ -14,12 +14,17 @@ import (
 	"github.com/masonictemple4/masonictempl/services"
 )
 
-func NewBlogsHandler(fh filestore.Filestore) BlogsHandler {
+func NewBlogsHandler(service *services.BlogService, fh filestore.Filestore) BlogsHandler {
 	// Include source path to the error or calling function in the log output.
+	if service == nil {
+		slog.Error("blogservice is nil")
+	}
+
 	lgr := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
+
 	return BlogsHandler{
 		Log:         lgr,
-		BlogService: services.NewBlogService(),
+		BlogService: service,
 		Filehandler: fh,
 	}
 }
