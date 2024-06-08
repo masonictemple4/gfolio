@@ -31,10 +31,6 @@ func (dh *DefaultHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r = r.WithContext(ctx)
 
 	part := urlParts[0]
-	println("url: ", r.URL.Path)
-	println("part: ", part)
-	fmt.Printf("urlParts: %+v\n", urlParts)
-
 	if part == "" {
 		part = "/"
 	}

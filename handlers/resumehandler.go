@@ -60,7 +60,9 @@ func (rh ResumeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if fp == "" {
 		// "assets/resume.md"
-		fp = filepath.Join(filestore.GetRootPath(rh.FileHandler), "resume.md")
+		root := filestore.GetRootPath(rh.FileHandler)
+		fp = filepath.Join(root, "resume.md")
+
 	}
 
 	resumeData, err := rh.FileHandler.Read(r.Context(), fp)

@@ -56,7 +56,7 @@ templ BlogLayout(title string, disableBreadcrumbs bool) {
   @PageHeader("", determineBlogLayoutTitle(disableBreadcrumbs))
   <div class="w-2/3 mx-auto p-6">
     if !disableBreadcrumbs {
-    @Breadcrumbs(getPathCtx(ctx))
+      @Breadcrumbs(getPathCtx(ctx))
     }
     { children... }
   </div>

@@ -66,7 +66,9 @@ func NewInternalStore(assetRoot string) (*InternalStore, error) {
 
 func (i *InternalStore) init(path string, flag int) error {
 
-	path = filepath.Join(os.Getenv("WORKDIR"), path)
+	if !strings.Contains(path, os.Getenv("WORKDIR")) {
+		path = filepath.Join(os.Getenv("WORKDIR"), path)
+	}
 
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err
