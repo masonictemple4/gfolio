@@ -11,7 +11,7 @@ WORKDIR ?= $(shell pwd)
 # If this value is not specified it will default to your GOBIN
 # setting, and if that is empty it will default to a local `bin/`
 # directory.
-BIN_DIR ?= $(shell go env GOPRIVATE)
+BIN_DIR ?= bin
 
 ifeq ($(BIN_DIR),) 
 	BIN_DIR = bin

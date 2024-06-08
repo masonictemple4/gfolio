@@ -130,7 +130,8 @@ func startServer() {
 		hostStr = fmt.Sprintf("%s:%s", *hostPtr, *portPtr)
 	}
 
-	blogDb := db.NewPostgresGCPProxy()
+	blogDb := db.NewSqliteDB("blog.db", nil)
+	// blogDb := db.NewPostgresGCPProxy()
 
 	blogService := services.NewBlogService(blogDb)
 

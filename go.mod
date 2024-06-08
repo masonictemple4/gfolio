@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/cloudsqlconn v1.6.0
 	cloud.google.com/go/storage v1.36.0
 	github.com/GoogleCloudPlatform/cloudsql-proxy v1.33.16
-	github.com/a-h/templ v0.2.513
+	github.com/a-h/templ v0.2.663
 	github.com/gosimple/slug v1.13.1
 	github.com/jackc/pgx/v5 v5.5.2
 	github.com/joho/godotenv v1.5.1
