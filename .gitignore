@@ -1,5 +1,11 @@
 .git/
+*_templ.go
 .DS_Store
 *.db
 bin/
 env/
+node_modules/
+examples/
+public/
+*.txt
+
