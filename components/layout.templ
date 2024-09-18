@@ -36,7 +36,7 @@ templ Page(title string, meta map[string]string) {
 
 
 templ MainLayout(title string, index bool) {
-<main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full min-h-full">
+<main class="flex min-h-screen flex-col items-center p-8 gray-50 dark:bg-gray-900 h-full">
   @Navbar(false, nil)
   if index {
   <section class="flex-grow mt-8 max-w-screen w-2/5 min-w-2/5">
