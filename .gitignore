@@ -1,5 +1,5 @@
-.git/
 *_templ.go
+.git/
 .DS_Store
 *.db
 bin/
